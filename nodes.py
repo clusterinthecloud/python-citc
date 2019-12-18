@@ -19,6 +19,16 @@ def node_list(slurm_conf: pathlib.Path) -> Iterator[str]:
                 yield from nodelist.split(",")
 
 
+NODE_STATE_FLAGS = {
+    "*": "not_responding",
+    "~": "power_save",
+    "#": "powering_up",
+    "%": "powering_down",
+    "$": "main_reservation",
+    "@": "pending_reboot",
+}
+
+
 class Node:
     def __init__(self):
         pass
@@ -36,7 +46,9 @@ class Node:
         "timestamp",
     ]
 
-    statelong: str
+    state: str
+    state_flag: str
+    features: dict
 
     @classmethod
     def from_name(cls: Type["Node"], nodename: str) -> "Node":
@@ -51,5 +63,9 @@ class Node:
         ]
         data = {k: v for k, v in zip(cls.sinfo_fields, fields)}
         n = cls()
-        n.statelong = data["statelong"]
+        if data["statelong"][-1] in NODE_STATE_FLAGS:
+            n.state = data["statelong"][:-1]
+            n.state_flag = data["statelong"][-1]
+        else:
+            n.state = data["statelong"]
         return n

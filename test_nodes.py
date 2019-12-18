@@ -52,4 +52,4 @@ def test_create_node(mocker):
     )
     n = Node.from_name("test")
 
-    assert n.statelong == node_data["statelong"]
+    assert n.state == "idle"
