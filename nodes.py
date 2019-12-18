@@ -4,7 +4,7 @@ import pathlib
 from typing import Iterator
 
 
-def slurm_node_list(slurm_conf: pathlib.Path) -> Iterator[str]:
+def node_list(slurm_conf: pathlib.Path) -> Iterator[str]:
     """
     Given a config file, gives all the nodes listed within
     """
@@ -13,6 +13,6 @@ def slurm_node_list(slurm_conf: pathlib.Path) -> Iterator[str]:
             if line.startswith("NodeName="):
                 nodelist = line.split()[0][9:]
                 if '[' in nodelist:
-                    # TODO use pyslurm.hostlist.create/get_list
+                    # TODO use pyslurm.hostlist().create()/get_list()
                     pass
                 yield from nodelist.split(",")

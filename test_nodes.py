@@ -1,6 +1,6 @@
 import textwrap
 
-from list_nodes import slurm_node_list
+from nodes import node_list
 
 
 def test_slurm_node_list(tmp_path):
@@ -23,7 +23,7 @@ def test_slurm_node_list(tmp_path):
             """
         )
     )
-    r = list(slurm_node_list(p))
+    r = list(node_list(p))
     assert len(r) == 10
     assert r[0] == "t3-micro-0001"
     assert r[-1] == "t3-micro-0010"
