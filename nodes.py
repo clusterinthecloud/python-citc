@@ -29,7 +29,7 @@ NODE_STATE_FLAGS = {
 }
 
 
-class Node:
+class SlurmNode:
     def __init__(self):
         pass
 
@@ -51,7 +51,7 @@ class Node:
     features: dict
 
     @classmethod
-    def from_name(cls: Type["Node"], nodename: str) -> "Node":
+    def from_name(cls: Type["SlurmNode"], nodename: str) -> "SlurmNode":
         field_width = 40
         sinfo_format = ",".join(f"{f}:{field_width}" for f in cls.SINFO_FIELDS)
         out = subprocess.run(

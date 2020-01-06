@@ -1,7 +1,7 @@
 import subprocess
 import textwrap
 
-from nodes import node_list, Node, parse_features
+from nodes import node_list, SlurmNode, parse_features
 
 
 def test_slurm_node_list(tmp_path):
@@ -43,14 +43,14 @@ def test_create_node(mocker):
         "nodeaddr": "vm-standard-e2-2-ad3-0001",
         "timestamp": "Unknown",
     }
-    sinfo_output = "".join(f"{node_data[f]:40}" for f in Node.SINFO_FIELDS)
+    sinfo_output = "".join(f"{node_data[f]:40}" for f in SlurmNode.SINFO_FIELDS)
     mocker.patch(
         "subprocess.run",
         return_value=subprocess.CompletedProcess(
             args="", returncode=0, stdout=sinfo_output.encode()
         ),
     )
-    n = Node.from_name("vm-standard-e2-2-ad3-0001")
+    n = SlurmNode.from_name("vm-standard-e2-2-ad3-0001")
 
     assert n.state == "idle"
 
