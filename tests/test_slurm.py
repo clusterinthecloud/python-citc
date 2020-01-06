@@ -1,9 +1,9 @@
 import subprocess
 import textwrap
 
-import pytest
+import pytest  # type: ignore
 
-from citc.slurm import node_list, SlurmNode, parse_features, all_nodes
+from citc.slurm import node_list, SlurmNode, parse_features
 
 
 @pytest.fixture(scope="function")
