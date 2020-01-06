@@ -43,7 +43,7 @@ def test_create_node(mocker):
         "nodeaddr": "vm-standard-e2-2-ad3-0001",
         "timestamp": "Unknown",
     }
-    sinfo_output = "".join(f"{node_data[f]:40}" for f in Node.sinfo_fields)
+    sinfo_output = "".join(f"{node_data[f]:40}" for f in Node.SINFO_FIELDS)
     mocker.patch(
         "subprocess.run",
         return_value=subprocess.CompletedProcess(

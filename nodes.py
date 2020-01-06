@@ -2,7 +2,6 @@
 
 import pathlib
 import subprocess
-from dataclasses import dataclass
 from typing import Iterator, Type
 
 
@@ -30,12 +29,11 @@ NODE_STATE_FLAGS = {
 }
 
 
-@dataclass
 class Node:
     def __init__(self):
         pass
 
-    sinfo_fields = [
+    SINFO_FIELDS = [
         "nodelist",
         "statelong",
         "reason",
@@ -55,7 +53,7 @@ class Node:
     @classmethod
     def from_name(cls: Type["Node"], nodename: str) -> "Node":
         field_width = 40
-        sinfo_format = ",".join(f"{f}:{field_width}" for f in cls.sinfo_fields)
+        sinfo_format = ",".join(f"{f}:{field_width}" for f in cls.SINFO_FIELDS)
         out = subprocess.run(
             ["sinfo", "--nodes", nodename, "--Format", sinfo_format, "--noheader"]
         ).stdout.decode()
@@ -63,7 +61,7 @@ class Node:
             out[start : start + field_width].strip()
             for start in range(0, len(out), field_width)
         ]
-        data = {k: v for k, v in zip(cls.sinfo_fields, fields)}
+        data = {k: v for k, v in zip(cls.SINFO_FIELDS, fields)}
         n = cls()
 
         if data["statelong"][-1] in NODE_STATE_FLAGS:
