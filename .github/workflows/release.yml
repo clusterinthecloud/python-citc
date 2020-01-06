@@ -31,7 +31,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload packages
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.1  # Update to v1 when https://github.com/actions/upload-release-asset/issues/23
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
