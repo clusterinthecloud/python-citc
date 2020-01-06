@@ -8,6 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.6"
 boto3 = "^1.10.46"
+PyYaml = "^5.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3"

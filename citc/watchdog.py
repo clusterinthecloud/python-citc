@@ -1,5 +1,24 @@
+import copy
 import signal
 import time
+from typing import Dict, List
+
+import yaml
+
+from . import aws, slurm, cloud
+
+
+def load_yaml(filename: str) -> dict:
+    with open(filename, "r") as f:
+        return yaml.safe_load(f)
+
+
+def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
+    """
+    Get the information about the space into which we were creating nodes
+    This will be static for all nodes in this cluster
+    """
+    return load_yaml(file)
 
 
 class SignalHandler:
@@ -14,10 +33,44 @@ class SignalHandler:
         self.alive = False
 
 
+def crosscheck(slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.CloudNode]):
+    cloud_nodes = copy.deepcopy(cloud_nodes)
+    for slurm_node in slurm_nodes:
+        matches = [node for node in cloud_nodes if node.name == slurm_node.name]
+        if len(matches) == 0:
+            # Can't find the node in the cloud
+            # TODO match up appropriate states
+            # TODO yield things to fix
+            pass
+        elif len(matches) > 1:
+            # Too many cloud node matches
+            # TODO yield things to fix
+            pass
+        else:
+            # There is one slurm node and one cloud node
+            # TODO check for unmatched state
+            # TODO yield things to fix
+            cloud_nodes.remove(matches[0])
+
+    if cloud_nodes:
+        # There are unmatched cloud nodes
+        # TODO yield things to fix
+        pass
+
+
 def main():
     handler = SignalHandler()
+
+    SLURM_CONF = "/mnt/shared/etc/slurm/slurm.conf"
+
     while handler.alive:
-        print("Running")
+        nodespace = get_nodespace()
+        ec2 = aws.ec2_client(nodespace)
+        aws_nodes = aws.all_nodes(ec2, nodespace)
+        slurm_nodes = slurm.all_nodes(SLURM_CONF)
+
+        crosscheck(slurm_nodes, aws_nodes)
+
         time.sleep(5)
 
 
