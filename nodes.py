@@ -2,6 +2,7 @@
 
 import pathlib
 import subprocess
+from dataclasses import dataclass
 from typing import Iterator, Type
 
 
@@ -29,6 +30,7 @@ NODE_STATE_FLAGS = {
 }
 
 
+@dataclass
 class Node:
     def __init__(self):
         pass
