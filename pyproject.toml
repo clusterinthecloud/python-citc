@@ -7,13 +7,15 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-mypy = "^0.760"
+boto3 = "^1.10.46"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3"
 pytest-mock = "^1.13.0"
 black = {version = "*", allow-prereleases = true}
+mypy = "^0.760"
 flake8 = "^3.7.9"
+moto = "^1.3.14"
 
 [build-system]
 requires = ["poetry>=0.12"]
