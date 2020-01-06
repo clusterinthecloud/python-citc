@@ -10,20 +10,20 @@ jobs:
       matrix:
         python-version: [3.6, 3.7, 3.8]
     steps:
-    - uses: actions/checkout@master
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Poetry
-      run: pip install poetry
-    - name: Setup package
-      run: poetry install
-    - name: Run flake8
-      run: poetry run flake8 --max-line-length=120 --ignore=E203
-    - name: Run mypy
-      run: poetry run mypy citc
-    - name: Run black
-      run: poetry run black --check .
-    - name: Run pytest
-      run: poetry run pytest
+      - uses: actions/checkout@master
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Poetry
+        run: pip install poetry
+      - name: Setup package
+        run: poetry install
+      - name: Run flake8
+        run: poetry run flake8 --max-line-length=120 --ignore=E203
+      - name: Run mypy
+        run: poetry run mypy citc
+      - name: Run black
+        run: poetry run black --check .
+      - name: Run pytest
+        run: poetry run pytest
