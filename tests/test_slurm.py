@@ -1,10 +1,13 @@
 import subprocess
 import textwrap
 
-from citc.slurm import node_list, SlurmNode, parse_features
+import pytest
+
+from citc.slurm import node_list, SlurmNode, parse_features, all_nodes
 
 
-def test_slurm_node_list(tmp_path):
+@pytest.fixture(scope="function")
+def slurm_conf(tmp_path):
     p = tmp_path / "slurm.conf"
     p.write_text(
         textwrap.dedent(
@@ -24,7 +27,11 @@ def test_slurm_node_list(tmp_path):
             """
         )
     )
-    r = list(node_list(p))
+    return p
+
+
+def test_slurm_node_list(slurm_conf):
+    r = list(node_list(slurm_conf))
     assert len(r) == 10
     assert r[0] == "t3-micro-0001"
     assert r[-1] == "t3-micro-0010"
@@ -50,7 +57,7 @@ def test_create_node(mocker):
             args="", returncode=0, stdout=sinfo_output.encode()
         ),
     )
-    n = SlurmNode.from_name("vm-standard-e2-2-ad3-0001")
+    n = SlurmNode.from_name(node_data["nodelist"])
 
     assert n.state == "idle"
 

@@ -81,3 +81,7 @@ def parse_features(feature_string: str) -> dict:
         k, v = pair.split("=")
         feature_dict[k] = v
     return feature_dict
+
+
+def all_nodes(slurm_conf):
+    return [SlurmNode.from_name(hostname) for hostname in node_list(slurm_conf)]
