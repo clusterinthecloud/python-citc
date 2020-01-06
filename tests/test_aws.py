@@ -3,6 +3,7 @@ import pytest  # type: ignore
 from moto import mock_ec2  # type: ignore
 
 from citc.aws import AwsNode, all_nodes
+from citc.cloud import NodeState
 
 
 @pytest.fixture
@@ -42,7 +43,7 @@ def test_awsnode(ec2, nodespace):
     launch_node("foo", ec2, nodespace)
     node = AwsNode.from_name("foo", ec2, nodespace)
     assert node.name == "foo"
-    assert node.state == "running"
+    assert node.state == NodeState.RUNNING
 
 
 def test_all_nodes_empty(ec2, nodespace):

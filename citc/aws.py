@@ -2,6 +2,8 @@ from typing import Type
 
 import boto3  # type: ignore
 
+from .cloud import CloudNode, NodeState
+
 
 class NodeNotFound(Exception):
     pass
@@ -11,10 +13,7 @@ def ec2_client(nodespace: dict):
     return boto3.client("ec2", region_name=nodespace["region"])
 
 
-class AwsNode:
-    name: str
-    state: str
-
+class AwsNode(CloudNode):
     @classmethod
     def from_name(
         cls: Type["AwsNode"], nodename: str, client, nodespace: dict
@@ -42,7 +41,10 @@ class AwsNode:
         n = cls()
 
         n.name = name
-        n.state = state
+        if state == "running":
+            n.state = NodeState.RUNNING
+        else:
+            n.state = NodeState.OTHER
 
         return n
 
