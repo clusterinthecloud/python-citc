@@ -1,7 +1,7 @@
 import subprocess
 import textwrap
 
-from nodes import node_list, Node
+from nodes import node_list, Node, parse_features
 
 
 def test_slurm_node_list(tmp_path):
@@ -50,6 +50,16 @@ def test_create_node(mocker):
             args="", returncode=0, stdout=sinfo_output.encode()
         ),
     )
-    n = Node.from_name("test")
+    n = Node.from_name("vm-standard-e2-2-ad3-0001")
 
     assert n.state == "idle"
+
+
+def test_parse_features(mocker):
+    r = parse_features("shape=VM.Standard.E2.2,ad=3")
+    expected = {
+        "shape": "VM.Standard.E2.2",
+        "ad": "3",
+    }
+
+    assert r == expected
