@@ -1,7 +1,8 @@
 import boto3  # type: ignore
 import pytest  # type: ignore
-from aws import AwsNode, all_nodes
 from moto import mock_ec2  # type: ignore
+
+from citc.aws import AwsNode, all_nodes
 
 
 @pytest.fixture
