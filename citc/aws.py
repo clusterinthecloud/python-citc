@@ -43,10 +43,7 @@ class AwsNode(CloudNode):
         else:
             node_state = NodeState.OTHER
 
-        return cls(
-            name=name,
-            state=node_state,
-        )
+        return cls(name=name, state=node_state)
 
 
 def all_nodes(client, nodespace: dict):

@@ -69,19 +69,14 @@ class SlurmNode:
 
         if data["statelong"][-1] in NODE_STATE_FLAGS:
             state = data["statelong"][:-1]
-            state_flag = data["statelong"][-1]
+            state_flag: Optional[str] = data["statelong"][-1]
         else:
             state = data["statelong"]
             state_flag = None
 
         features = parse_features(data["features"])
 
-        return cls(
-            name=nodename,
-            state=state,
-            state_flag=state_flag,
-            features=features,
-        )
+        return cls(name=nodename, state=state, state_flag=state_flag, features=features)
 
 
 def parse_features(feature_string: str) -> dict:
