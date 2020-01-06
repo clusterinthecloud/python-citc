@@ -1,0 +1,4 @@
+dist
+.idea
+.mypy_cache
+__pycache__
