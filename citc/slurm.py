@@ -2,7 +2,7 @@
 
 import pathlib
 import subprocess
-from typing import Iterator, Type
+from typing import Iterator, Type, Optional
 
 
 def node_list(slurm_conf: pathlib.Path) -> Iterator[str]:
@@ -30,8 +30,11 @@ NODE_STATE_FLAGS = {
 
 
 class SlurmNode:
-    def __init__(self):
-        pass
+    def __init__(self, name, state, features, state_flag):
+        self.name = name
+        self.state = state
+        self.state_flag = state_flag
+        self.features = features
 
     SINFO_FIELDS = [
         "nodelist",
@@ -46,8 +49,9 @@ class SlurmNode:
         "timestamp",
     ]
 
+    name: str
     state: str
-    state_flag: str
+    state_flag: Optional[str]
     features: dict
 
     @classmethod
@@ -62,17 +66,22 @@ class SlurmNode:
             for start in range(0, len(out), field_width)
         ]
         data = {k: v for k, v in zip(cls.SINFO_FIELDS, fields)}
-        n = cls()
 
         if data["statelong"][-1] in NODE_STATE_FLAGS:
-            n.state = data["statelong"][:-1]
-            n.state_flag = data["statelong"][-1]
+            state = data["statelong"][:-1]
+            state_flag = data["statelong"][-1]
         else:
-            n.state = data["statelong"]
+            state = data["statelong"]
+            state_flag = None
 
-        n.features = parse_features(data["features"])
+        features = parse_features(data["features"])
 
-        return n
+        return cls(
+            name=nodename,
+            state=state,
+            state_flag=state_flag,
+            features=features,
+        )
 
 
 def parse_features(feature_string: str) -> dict:

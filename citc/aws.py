@@ -38,15 +38,15 @@ class AwsNode(CloudNode):
         state = response["State"]["Name"]
         name = next(pair["Value"] for pair in response["Tags"] if pair["Key"] == "Name")
 
-        n = cls()
-
-        n.name = name
         if state == "running":
-            n.state = NodeState.RUNNING
+            node_state = NodeState.RUNNING
         else:
-            n.state = NodeState.OTHER
+            node_state = NodeState.OTHER
 
-        return n
+        return cls(
+            name=name,
+            state=node_state,
+        )
 
 
 def all_nodes(client, nodespace: dict):

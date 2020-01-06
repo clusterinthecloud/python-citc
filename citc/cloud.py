@@ -11,3 +11,7 @@ class NodeState(Enum):
 class CloudNode:
     name: str
     state: NodeState
+
+    def __init__(self, name, state):
+        self.name = name
+        self.state = state
