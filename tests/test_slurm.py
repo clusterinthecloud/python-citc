@@ -1,7 +1,7 @@
 import subprocess
 import textwrap
 
-from citc.nodes import node_list, SlurmNode, parse_features
+from citc.slurm import node_list, SlurmNode, parse_features
 
 
 def test_slurm_node_list(tmp_path):
