@@ -1,7 +1,7 @@
 import copy
 import signal
 import time
-from typing import Dict, List
+from typing import Dict, List, Callable, Iterator
 
 import yaml
 
@@ -33,7 +33,12 @@ class SignalHandler:
         self.alive = False
 
 
-def crosscheck(slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.CloudNode]):
+Changes = Iterator[Callable[[], None]]
+
+
+def crosscheck(
+    slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.CloudNode]
+) -> Changes:
     cloud_nodes = copy.copy(cloud_nodes)
     for slurm_node in slurm_nodes:
         matches = [node for node in cloud_nodes if node.name == slurm_node.name]
@@ -45,7 +50,7 @@ def crosscheck(slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.Cloud
                 # The node is marked down but does not exist. Reset the state so that a new one can be created.
                 # TODO Check REASON?
                 print(f"Node {slurm_node.name} is DOWN with no cloud node, resuming")
-                slurm_node.resume()
+                yield slurm_node.resume
             # Can't find the node in the cloud
             # TODO match up appropriate states
             # TODO yield things to fix
@@ -79,7 +84,8 @@ def main():
         aws_nodes = aws.all_nodes(ec2, nodespace)
         slurm_nodes = slurm.all_nodes(SLURM_CONF)
 
-        crosscheck(slurm_nodes, aws_nodes)
+        for task in crosscheck(slurm_nodes, aws_nodes):
+            task()
 
         time.sleep(5)
 

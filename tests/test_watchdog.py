@@ -11,19 +11,18 @@ def test_crosscheck():
     crosscheck(slurm_nodes, cloud_nodes)
 
 
-def test_missing_node_down(mocker):
+def test_missing_node_down():
     slurm_nodes = [SlurmNode(name="foo-1", state="down", state_flag=None, features={})]
     cloud_nodes = []
 
-    run = mocker.patch("subprocess.run")
-    crosscheck(slurm_nodes, cloud_nodes)
-    run.assert_called_once()
+    res = crosscheck(slurm_nodes, cloud_nodes)
+    assert slurm_nodes[0].resume in res
 
 
 def test_idle_node_off(mocker):
     slurm_nodes = [SlurmNode(name="foo-1", state="idle", state_flag="~", features={})]
     cloud_nodes = []
 
-    crosscheck(slurm_nodes, cloud_nodes)
-
-    # TODO assert that nothing hapenns
+    res = crosscheck(slurm_nodes, cloud_nodes)
+    res = list(res)
+    assert not res
