@@ -59,6 +59,8 @@ def crosscheck(slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.Cloud
 
 
 def main():
+    print("Starting CitC watchdog")
+
     handler = SignalHandler()
 
     SLURM_CONF = "/mnt/shared/etc/slurm/slurm.conf"
@@ -72,6 +74,8 @@ def main():
         crosscheck(slurm_nodes, aws_nodes)
 
         time.sleep(5)
+
+    print("Exiting CitC watchdog")
 
 
 if __name__ == "__main__":
