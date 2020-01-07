@@ -79,6 +79,12 @@ class SlurmNode:
 
         return cls(name=nodename, state=state, state_flag=state_flag, features=features)
 
+    def resume(self):
+        subprocess.run(
+            ["scontrol", "update", f"NodeName={self.name}", "state=Resume"],
+            timeout=5,
+        )
+
 
 def parse_features(feature_string: str) -> dict:
     feature_dict = {}

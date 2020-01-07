@@ -41,6 +41,11 @@ def crosscheck(slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.Cloud
             if slurm_node.state_flag == "~":
                 # Slurm thinks the node is turned off and there's no cloud node, all good.
                 continue
+            if slurm_node.state == "down":
+                # The node is marked down but does not exist. Reset the state so that a new one can be created.
+                # TODO Check REASON?
+                print(f"Node {slurm_node.name} is DOWN with no matching cloud node, resuming")
+                slurm_node.resume()
             # Can't find the node in the cloud
             # TODO match up appropriate states
             # TODO yield things to fix
