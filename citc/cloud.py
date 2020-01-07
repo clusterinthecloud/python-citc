@@ -1,3 +1,4 @@
+from abc import ABC
 from enum import Enum, auto
 
 
@@ -8,7 +9,7 @@ class NodeState(Enum):
     OTHER = auto()
 
 
-class CloudNode:
+class CloudNode(ABC):
     name: str
     state: NodeState
 
