@@ -59,7 +59,8 @@ class SlurmNode:
         field_width = 40
         sinfo_format = ",".join(f"{f}:{field_width}" for f in cls.SINFO_FIELDS)
         out = subprocess.run(
-            ["sinfo", "--nodes", nodename, "--Format", sinfo_format, "--noheader"]
+            ["sinfo", "--nodes", nodename, "--Format", sinfo_format, "--noheader"],
+            timeout=5,
         ).stdout.decode()
         fields = [
             out[start : start + field_width].strip()
