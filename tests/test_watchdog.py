@@ -19,7 +19,7 @@ def test_missing_node_down():
     assert slurm_nodes[0].resume in res
 
 
-def test_idle_node_off(mocker):
+def test_idle_node_off():
     slurm_nodes = [SlurmNode(name="foo-1", state="idle", state_flag="~", features={})]
     cloud_nodes = []
 
