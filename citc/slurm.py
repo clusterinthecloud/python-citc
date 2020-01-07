@@ -30,12 +30,6 @@ NODE_STATE_FLAGS = {
 
 
 class SlurmNode:
-    def __init__(self, name, state, features, state_flag):
-        self.name = name
-        self.state = state
-        self.state_flag = state_flag
-        self.features = features
-
     SINFO_FIELDS = [
         "nodelist",
         "statelong",
@@ -53,6 +47,12 @@ class SlurmNode:
     state: str
     state_flag: Optional[str]
     features: dict
+
+    def __init__(self, name, state, features, state_flag):
+        self.name = name
+        self.state = state
+        self.state_flag = state_flag
+        self.features = features
 
     @classmethod
     def from_name(cls: Type["SlurmNode"], nodename: str) -> "SlurmNode":
