@@ -1,3 +1,4 @@
+import configparser
 from typing import Type
 
 import boto3  # type: ignore
@@ -10,7 +11,14 @@ class NodeNotFound(Exception):
 
 
 def ec2_client(nodespace: dict):
-    return boto3.client("ec2", region_name=nodespace["region"])
+    config = configparser.ConfigParser()
+    config.read("/home/slurm/aws-credentials.csv")
+    return boto3.client(
+        "ec2",
+        region_name=nodespace["region"],
+        aws_access_key_id=config["default"]["aws_access_key_id"],
+        aws_secret_access_key=config["default"]["aws_secret_access_key"],
+    )
 
 
 class AwsNode(CloudNode):
