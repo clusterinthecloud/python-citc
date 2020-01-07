@@ -52,11 +52,13 @@ def crosscheck(
                 print(f"Node {slurm_node.name} is DOWN with no cloud node, resuming")
                 yield slurm_node.resume
             # Can't find the node in the cloud
+            print(f"Node {slurm_node.name} has no matching cloud node")
             # TODO match up appropriate states
             # TODO yield things to fix
             pass
         elif len(matches) > 1:
             # Too many cloud node matches
+            print(f"Node {slurm_node.name} matched multiple cloud nodes")
             # TODO yield things to fix
             pass
         else:
@@ -67,6 +69,7 @@ def crosscheck(
 
     if cloud_nodes:
         # There are unmatched cloud nodes
+        print(f"Cloud nodes {cloud_nodes} have no match in Slurm")
         # TODO yield things to fix
         pass
 
