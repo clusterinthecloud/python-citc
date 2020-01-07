@@ -81,8 +81,7 @@ class SlurmNode:
 
     def resume(self):
         subprocess.run(
-            ["scontrol", "update", f"NodeName={self.name}", "state=Resume"],
-            timeout=5,
+            ["scontrol", "update", f"NodeName={self.name}", "state=Resume"], timeout=5
         )
 
 
