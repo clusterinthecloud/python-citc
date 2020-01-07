@@ -61,13 +61,13 @@ class SlurmNode:
         out = subprocess.run(
             ["sinfo", "--nodes", nodename, "--Format", sinfo_format, "--noheader"],
             timeout=5,
+            stdout=subprocess.PIPE,
         ).stdout.decode()
         fields = [
             out[start : start + field_width].strip()
             for start in range(0, len(out), field_width)
         ]
         data = {k: v for k, v in zip(cls.SINFO_FIELDS, fields)}
-
         if data["statelong"][-1] in NODE_STATE_FLAGS:
             state = data["statelong"][:-1]
             state_flag: Optional[str] = data["statelong"][-1]
