@@ -1,3 +1,5 @@
+import subprocess
+
 from citc.aws import AwsNode
 from citc.cloud import NodeState
 from citc.slurm import SlurmNode
@@ -9,3 +11,12 @@ def test_crosscheck():
     cloud_nodes = [AwsNode(name="foo-1", state=NodeState.RUNNING)]
 
     crosscheck(slurm_nodes, cloud_nodes)
+
+
+def test_missing_node_down(mocker):
+    slurm_nodes = [SlurmNode(name="foo-1", state="down", state_flag=None, features={})]
+    cloud_nodes = []
+
+    run = mocker.patch("subprocess.run")
+    crosscheck(slurm_nodes, cloud_nodes)
+    run.assert_called_once()
