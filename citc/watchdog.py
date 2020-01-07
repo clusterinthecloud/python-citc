@@ -90,7 +90,7 @@ def main():
         for task in crosscheck(slurm_nodes, aws_nodes):
             task()
 
-        time.sleep(5)
+        time.sleep(60)
 
     print("Exiting CitC watchdog")
 
