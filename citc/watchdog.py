@@ -2,6 +2,7 @@ import copy
 import signal
 import time
 from typing import Dict, List, Callable, Iterator
+from pathlib import Path
 
 import yaml
 
@@ -79,7 +80,7 @@ def main():
 
     handler = SignalHandler()
 
-    SLURM_CONF = "/mnt/shared/etc/slurm/slurm.conf"
+    SLURM_CONF = Path("/mnt/shared/etc/slurm/slurm.conf")
 
     while handler.alive:
         nodespace = get_nodespace()
