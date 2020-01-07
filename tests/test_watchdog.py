@@ -1,5 +1,3 @@
-import subprocess
-
 from citc.aws import AwsNode
 from citc.cloud import NodeState
 from citc.slurm import SlurmNode
@@ -23,7 +21,7 @@ def test_missing_node_down(mocker):
 
 
 def test_idle_node_off(mocker):
-    slurm_nodes = [SlurmNode(name="foo-1", state="idle", state_flag='~', features={})]
+    slurm_nodes = [SlurmNode(name="foo-1", state="idle", state_flag="~", features={})]
     cloud_nodes = []
 
     crosscheck(slurm_nodes, cloud_nodes)
