@@ -29,8 +29,8 @@ fi
 echo "Are you sure you want to release the next ${version_spec} version?"
 select yn in "Yes" "No"; do
     case $yn in
-        Yes ) make install; break;;
-        No ) exit;;
+        Yes ) break;;
+        No ) exit 1;;
     esac
 done
 
@@ -41,4 +41,5 @@ new_version=$(poetry version | awk '{print $2}')
 git add pyproject.toml
 git commit -m "Update to version ${new_version}"
 git tag "${new_version}"
-git push --all --tags
+git push --all
+git push --tags
