@@ -34,7 +34,7 @@ class SignalHandler:
 
 
 def crosscheck(slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.CloudNode]):
-    cloud_nodes = copy.deepcopy(cloud_nodes)
+    cloud_nodes = copy.copy(cloud_nodes)
     for slurm_node in slurm_nodes:
         matches = [node for node in cloud_nodes if node.name == slurm_node.name]
         if len(matches) == 0:
