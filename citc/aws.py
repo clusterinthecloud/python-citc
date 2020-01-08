@@ -47,10 +47,15 @@ class AwsNode(CloudNode):
         state = response["State"]["Name"]
         name = next(pair["Value"] for pair in response["Tags"] if pair["Key"] == "Name")
 
-        if state == "running":
-            node_state = NodeState.RUNNING
-        else:
-            node_state = NodeState.OTHER
+        node_state_map = {
+            "pending": NodeState.PENDING,
+            "running": NodeState.RUNNING,
+            "stopping": NodeState.STOPPING,
+            "stopped": NodeState.STOPPED,
+            "shutting-down": NodeState.TERMINATING,
+            "terminated": NodeState.TERMINATED,
+        }
+        node_state = node_state_map.get(state, NodeState.OTHER)
 
         return cls(name=name, state=node_state)
 
