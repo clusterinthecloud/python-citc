@@ -12,11 +12,12 @@ def test_create_table():
         SlurmNode(name="foo-2", state="idle", state_flag="~", features={}),
     ]
     cloud_nodes = [AwsNode(name="foo-1", state=NodeState.RUNNING)]
-    table = create_table(slurm_nodes, cloud_nodes)
+    table, headers = create_table(slurm_nodes, cloud_nodes)
     assert table == [
         ["foo-1", "idle", "", NodeState.RUNNING],
         ["foo-2", "idle", "power save", None],
     ]
+    assert headers == ["Name", "Slurm state", "Flag", "Cloud state"]
 
 
 def test_print_table():

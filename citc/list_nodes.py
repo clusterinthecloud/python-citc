@@ -25,7 +25,9 @@ def create_table(
             ]
         )
 
-    return table
+    headers = ["Name", "Slurm state", "Flag", "Cloud state"]
+
+    return table, headers
 
 
 def main():
@@ -34,8 +36,8 @@ def main():
     cloud_nodes = utils.get_cloud_nodes()
     slurm_nodes = slurm.all_nodes(slurm_conf)
 
-    table_data = create_table(slurm_nodes, cloud_nodes)
-    table = tabulate(table_data, headers=["Name", "Slurm state", "Flag", "Cloud state"])
+    table_data, headers = create_table(slurm_nodes, cloud_nodes)
+    table = tabulate(table_data, headers=headers)
     print(table)
 
 
