@@ -106,7 +106,7 @@ def main():
         csp = nodespace["csp"]
         if csp == "aws":
             ec2 = aws.ec2_client(nodespace)
-            cloud_nodes = aws.all_nodes(ec2, nodespace)
+            cloud_nodes = aws.AwsNode.all(ec2, nodespace)
         elif csp == "google":
             cloud_nodes = []
         elif csp == "oracle":

@@ -2,7 +2,7 @@ import boto3  # type: ignore
 import pytest  # type: ignore
 from moto import mock_ec2  # type: ignore
 
-from citc.aws import AwsNode, all_nodes
+from citc.aws import AwsNode
 from citc.cloud import NodeState
 
 
@@ -47,10 +47,10 @@ def test_awsnode(ec2, nodespace):
 
 
 def test_all_nodes_empty(ec2, nodespace):
-    assert all_nodes(ec2, nodespace) == []
+    assert AwsNode.all(ec2, nodespace) == []
 
 
 def test_all_nodes(ec2, nodespace):
     launch_node("foo", ec2, nodespace)
-    nodes = all_nodes(ec2, nodespace)
+    nodes = AwsNode.all(ec2, nodespace)
     assert len(nodes) == 1

@@ -59,17 +59,17 @@ class AwsNode(CloudNode):
 
         return cls(name=name, state=node_state)
 
+    @classmethod
+    def all(cls, client, nodespace: dict):
+        result = client.describe_instances(
+            Filters=[
+                {"Name": "tag:cluster", "Values": [nodespace["cluster_id"]]},
+                {"Name": "tag:type", "Values": ["compute"]},
+            ]
+        )
+        if result["Reservations"]:
+            instances = result["Reservations"][0]["Instances"]
+        else:
+            instances = []
 
-def all_nodes(client, nodespace: dict):
-    result = client.describe_instances(
-        Filters=[
-            {"Name": "tag:cluster", "Values": [nodespace["cluster_id"]]},
-            {"Name": "tag:type", "Values": ["compute"]},
-        ]
-    )
-    if result["Reservations"]:
-        instances = result["Reservations"][0]["Instances"]
-    else:
-        instances = []
-
-    return [AwsNode.from_response(instance) for instance in instances]
+        return [cls.from_response(instance) for instance in instances]

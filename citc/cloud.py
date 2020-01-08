@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum, auto
 
 
@@ -38,3 +38,8 @@ class CloudNode(ABC):
     def __init__(self, name, state):
         self.name = name
         self.state = state
+
+    @classmethod
+    @abstractmethod
+    def all(cls, client, nodespace: dict):
+        pass
