@@ -6,18 +6,19 @@ class NodeState(Enum):
     """
     https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html
     https://cloud.google.com/compute/docs/instances/instance-life-cycle
+    https://docs.microsoft.com/en-us/azure/virtual-machines/windows/states-lifecycle
 
-    =========== ============= ===================== ===========================================
-    State       AWS           Google                Oracle
-    =========== ============= ===================== ===========================================
-    PENDING     pending       PROVISIONING STAGING  MOVING PROVISIONING CREATING_IMAGE STARTING
-    RUNNING     running       RUNNING               RUNNING
-    STOPPING    stopping      STOPPING              STOPPING
-    STOPPED     stopped       STOPPED TERMINATED    STOPPED
-    TERMINATING shutting-down                       TERMINATING
-    TERMINATED  terminated                          TERMINATED
+    =========== ============= ===================== =========================================== ============
+    State       AWS           Google                Oracle                                      Azure
+    =========== ============= ===================== =========================================== ============
+    PENDING     pending       PROVISIONING STAGING  MOVING PROVISIONING CREATING_IMAGE STARTING starting
+    RUNNING     running       RUNNING               RUNNING                                     running
+    STOPPING    stopping      STOPPING              STOPPING                                    stopping
+    STOPPED     stopped       STOPPED TERMINATED    STOPPED                                     stopped
+    TERMINATING shutting-down                       TERMINATING                                 deallocating
+    TERMINATED  terminated                          TERMINATED                                  deallocated
     OTHER                     SUSPENDING, SUSPENDED
-    =========== ============= ===================== ===========================================
+    =========== ============= ===================== =========================================== ============
     """
 
     PENDING = auto()

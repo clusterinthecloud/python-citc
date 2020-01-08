@@ -111,6 +111,8 @@ def main():
             cloud_nodes = []
         elif csp == "oracle":
             cloud_nodes = []
+        elif csp == "azure":
+            cloud_nodes = []
         else:
             raise Exception(f"Cloud provider {csp} not found")
 
