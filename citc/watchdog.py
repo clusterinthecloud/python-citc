@@ -1,25 +1,10 @@
 import copy
 import signal
 import time
-from typing import Dict, List, Callable, Iterator
+from typing import List, Callable, Iterator
 from pathlib import Path
 
-import yaml
-
-from . import aws, slurm, cloud, oracle
-
-
-def load_yaml(filename: str) -> dict:
-    with open(filename, "r") as f:
-        return yaml.safe_load(f)
-
-
-def get_nodespace(file="/etc/citc/startnode.yaml") -> Dict[str, str]:
-    """
-    Get the information about the space into which we were creating nodes
-    This will be static for all nodes in this cluster
-    """
-    return load_yaml(file)
+from . import aws, slurm, cloud, oracle, utils
 
 
 class SignalHandler:
@@ -101,7 +86,7 @@ def main():
     SLURM_CONF = Path("/mnt/shared/etc/slurm/slurm.conf")
 
     while handler.alive:
-        nodespace = get_nodespace()
+        nodespace = utils.get_nodespace()
 
         csp = nodespace["csp"]
         if csp == "aws":
