@@ -20,12 +20,12 @@ def node_list(slurm_conf: pathlib.Path) -> Iterator[str]:
 
 
 NODE_STATE_FLAGS = {
-    "*": "not_responding",
-    "~": "power_save",
-    "#": "powering_up",
-    "%": "powering_down",
-    "$": "main_reservation",
-    "@": "pending_reboot",
+    "*": "not responding",
+    "~": "power save",
+    "#": "powering up",
+    "%": "powering down",
+    "$": "main reservation",
+    "@": "pending reboot",
 }
 
 

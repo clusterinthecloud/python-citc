@@ -10,6 +10,7 @@ python = "^3.6"
 boto3 = "^1.10.46"
 PyYaml = "^5.2"
 oci = "^2.8.0"
+tabulate = "^0.8.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3"
@@ -21,6 +22,7 @@ moto = "^1.3.14"
 
 [tool.poetry.scripts]
 watchdog = 'citc.watchdog:main'
+list_nodes = 'citc.list_nodes:main'
 
 [build-system]
 requires = ["poetry>=0.12"]
