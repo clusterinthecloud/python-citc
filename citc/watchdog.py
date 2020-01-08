@@ -60,20 +60,28 @@ def crosscheck(
             if slurm_node.state == "down":
                 # The node is marked down but does not exist. Reset the state so that a new one can be created.
                 # TODO Check REASON?
-                print(f"Node {slurm_node.name} is DOWN with no cloud node, resuming")
+                print(f"{slurm_node.name} is DOWN with no cloud node, resuming")
                 yield slurm_node.resume
             # Can't find the node in the cloud
-            print(f"Node {slurm_node.name} has no matching cloud node")
+            print(f"{slurm_node.name} has no matching cloud node")
             # TODO match up appropriate states
             # TODO yield things to fix
             pass
         elif len(matches) > 1:
             # Too many cloud node matches
-            print(f"Node {slurm_node.name} matched multiple cloud nodes")
+            print(f"{slurm_node.name} matched multiple cloud nodes")
             # TODO yield things to fix
             pass
         else:
             # There is one slurm node and one cloud node
+            cloud_node = matches[0]
+            if slurm_node.state_flag == "#" and cloud_node.state not in [
+                cloud.NodeState.PENDING,
+                cloud.NodeState.RUNNING,
+            ]:
+                print(f"{slurm_node.name} is # but cloud state is {cloud_node.state}")
+                # TODO yield a fix
+                pass
             # TODO check for unmatched state
             # TODO yield things to fix
             cloud_nodes.remove(matches[0])
