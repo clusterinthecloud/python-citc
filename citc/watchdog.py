@@ -40,6 +40,16 @@ Changes = Iterator[Callable[[], None]]
 def crosscheck(
     slurm_nodes: List[slurm.SlurmNode], cloud_nodes: List[cloud.CloudNode]
 ) -> Changes:
+    """
+    Compare the Slurm and cloud nodes and provide fixes
+
+    Args:
+        slurm_nodes: a list of nodes from Slurm
+        cloud_nodes: a list of nodes from the cloud
+
+    Returns:
+        functions which, when called, fix each problem in turn
+    """
     cloud_nodes = copy.copy(cloud_nodes)
     for slurm_node in slurm_nodes:
         matches = [node for node in cloud_nodes if node.name == slurm_node.name]
