@@ -4,7 +4,7 @@ import time
 from typing import List, Callable, Iterator
 from pathlib import Path
 
-from . import aws, slurm, cloud, oracle, utils
+from . import slurm, cloud, utils
 
 
 class SignalHandler:
@@ -86,22 +86,7 @@ def main():
     SLURM_CONF = Path("/mnt/shared/etc/slurm/slurm.conf")
 
     while handler.alive:
-        nodespace = utils.get_nodespace()
-
-        csp = nodespace["csp"]
-        if csp == "aws":
-            ec2 = aws.ec2_client(nodespace)
-            cloud_nodes = aws.AwsNode.all(ec2, nodespace)
-        elif csp == "google":
-            cloud_nodes = []
-        elif csp == "oracle":
-            client_config = oracle.client_config(nodespace)
-            cloud_nodes = oracle.OracleNode.all(client_config, nodespace)
-        elif csp == "azure":
-            cloud_nodes = []
-        else:
-            raise Exception(f"Cloud provider {csp} not found")
-
+        cloud_nodes = utils.get_cloud_nodes()
         slurm_nodes = slurm.all_nodes(SLURM_CONF)
 
         for task in crosscheck(slurm_nodes, cloud_nodes):
