@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from . import aws, slurm, cloud
+from . import aws, slurm, cloud, oracle
 
 
 def load_yaml(filename: str) -> dict:
@@ -110,7 +110,8 @@ def main():
         elif csp == "google":
             cloud_nodes = []
         elif csp == "oracle":
-            cloud_nodes = []
+            client_config = oracle.client_config(nodespace)
+            cloud_nodes = oracle.OracleNode.all(client_config, nodespace)
         elif csp == "azure":
             cloud_nodes = []
         else:
