@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import yaml
 
-from . import aws, oracle, cloud
+from . import aws, oracle, cloud, google
 
 
 def load_yaml(filename: str) -> dict:
@@ -26,7 +26,8 @@ def get_cloud_nodes() -> List[cloud.CloudNode]:
         ec2 = aws.ec2_client(nodespace)
         cloud_nodes = aws.AwsNode.all(ec2, nodespace)
     elif csp == "google":
-        cloud_nodes = []
+        client_config = google.client(nodespace)
+        cloud_nodes = google.GoogleNode.all(client_config, nodespace)
     elif csp == "oracle":
         client_config = oracle.client_config(nodespace)
         cloud_nodes = oracle.OracleNode.all(client_config, nodespace)
