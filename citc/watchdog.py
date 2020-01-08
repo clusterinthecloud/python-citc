@@ -94,11 +94,21 @@ def main():
 
     while handler.alive:
         nodespace = get_nodespace()
-        ec2 = aws.ec2_client(nodespace)
-        aws_nodes = aws.all_nodes(ec2, nodespace)
+
+        csp = nodespace["csp"]
+        if csp == "aws":
+            ec2 = aws.ec2_client(nodespace)
+            cloud_nodes = aws.all_nodes(ec2, nodespace)
+        elif csp == "google":
+            cloud_nodes = []
+        elif csp == "oracle":
+            cloud_nodes = []
+        else:
+            raise Exception(f"Cloud provider {csp} not found")
+
         slurm_nodes = slurm.all_nodes(SLURM_CONF)
 
-        for task in crosscheck(slurm_nodes, aws_nodes):
+        for task in crosscheck(slurm_nodes, cloud_nodes):
             task()
 
         time.sleep(60)
