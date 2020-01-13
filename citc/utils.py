@@ -26,10 +26,10 @@ def get_cloud_nodes() -> List[cloud.CloudNode]:
         ec2 = aws.ec2_client(nodespace)
         cloud_nodes = aws.AwsNode.all(ec2, nodespace)
     elif csp == "google":
-        client_config = google.client(nodespace)
-        cloud_nodes = google.GoogleNode.all(client_config, nodespace)
+        client = google.client(nodespace)
+        cloud_nodes = google.GoogleNode.all(client, nodespace)
     elif csp == "oracle":
-        client = oracle.client_config(nodespace)
+        client = oracle.client(nodespace)
         cloud_nodes = oracle.OracleNode.all(client, nodespace)
     elif csp == "azure":
         cloud_nodes = []

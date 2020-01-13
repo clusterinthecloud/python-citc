@@ -35,7 +35,7 @@ class GoogleNode(CloudNode):
     def from_name(
         cls: Type["GoogleNode"], nodename: str, client, nodespace: dict
     ) -> "GoogleNode":
-        filter_clause = f"(name={nodename})"
+        filter_clause = f"name={nodename}"
         result = (
             client.instances()
             .list(

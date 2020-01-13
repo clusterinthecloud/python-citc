@@ -1,12 +1,9 @@
-import httplib2  # type: ignore
 import googleapiclient.discovery  # type: ignore
-import json
 import pytest  # type: ignore
-from urllib.parse import urlparse
-from google.auth.credentials import Credentials  # type: ignore
 
 from citc.google import GoogleNode
 from citc.cloud import NodeState
+from tests.cloud_simulator import mock_google
 
 
 @pytest.fixture
@@ -19,60 +16,33 @@ def nodespace():
 
 @pytest.fixture(scope="function")
 def client():
-    class MockCredentials(Credentials):
-        def refresh(self, request):
-            pass
-
-        def before_request(self, request, method, url, headers):
-            pass
-
-    compute = googleapiclient.discovery.build(
-        "compute", "v1", credentials=MockCredentials(), cache_discovery=False
-    )
-    return compute
+    with mock_google():
+        return googleapiclient.discovery.build("compute", "v1")
 
 
-def test_googlenode(client, nodespace, mocker):
-    def request_mock(
-        http, num_retries, req_type, sleep, rand, uri, method, *args, **kwargs
-    ):
-        url = urlparse(uri)
-        project = nodespace["compartment_id"]
-        zone = nodespace["zone"]
-        if (
-            url.path == f"/compute/v1/projects/{project}/zones/{zone}/instances"
-            and url.query == "filter=%28name%3Dfoo%29&alt=json"
-            and method == "GET"
-        ):
-            return (
-                httplib2.Response({"status": 200, "reason": "OK"}),
-                json.dumps({"items": [{"name": "foo", "status": "RUNNING"}]}),
-            )
+def launch_node(nodename: str, client, nodespace):
+    config = {
+        "name": nodename,
+        "tags": {"items": ["compute"]},
+    }
 
-    mocker.patch("googleapiclient.http._retry_request", side_effect=request_mock)
+    project = nodespace["compartment_id"]
+    zone = nodespace["zone"]
+    client.instances().insert(project=project, zone=zone, body=config).execute()
 
+
+def test_googlenode(client, nodespace):
+    launch_node("foo", client, nodespace)
     node = GoogleNode.from_name("foo", client, nodespace)
     assert node.name == "foo"
     assert node.state == NodeState.RUNNING
 
 
-def test_all_nodes_empty(client, nodespace, mocker):
-    def request_mock(
-        http, num_retries, req_type, sleep, rand, uri, method, *args, **kwargs
-    ):
-        url = urlparse(uri)
-        project = nodespace["compartment_id"]
-        zone = nodespace["zone"]
-        if (
-            url.path == f"/compute/v1/projects/{project}/zones/{zone}/instances"
-            and url.query == "alt=json"
-            and method == "GET"
-        ):
-            return (
-                httplib2.Response({"status": 200, "reason": "OK"}),
-                json.dumps({}),
-            )
-
-    mocker.patch("googleapiclient.http._retry_request", side_effect=request_mock)
-
+def test_all_nodes_empty(client, nodespace):
     assert GoogleNode.all(client, nodespace) == []
+
+
+def test_all_nodes(client, nodespace):
+    launch_node("foo", client, nodespace)
+    nodes = GoogleNode.all(client, nodespace)
+    assert len(nodes) == 1

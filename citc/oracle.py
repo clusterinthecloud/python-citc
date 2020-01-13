@@ -18,13 +18,9 @@ class OracleNode(CloudNode):
     def from_name(
         cls: Type["OracleNode"], nodename: str, client, nodespace: dict
     ) -> "OracleNode":
-        matches = (
-            client
-            .list_instances(
-                compartment_id=nodespace["compartment_id"], display_name=nodename
-            )
-            .data
-        )
+        matches = client.list_instances(
+            compartment_id=nodespace["compartment_id"], display_name=nodename
+        ).data
         still_exist = [i for i in matches if i.lifecycle_state != "TERMINATED"]
 
         if not still_exist:
@@ -58,11 +54,9 @@ class OracleNode(CloudNode):
 
     @classmethod
     def all(cls, client, nodespace: dict):
-        instances = (
-            client
-            .list_instances(compartment_id=nodespace["compartment_id"])
-            .data
-        )
+        instances = client.list_instances(
+            compartment_id=nodespace["compartment_id"]
+        ).data
         nodes = [
             instance
             for instance in instances
