@@ -56,8 +56,8 @@ class GoogleNode(CloudNode):
 
     @classmethod
     def from_response(cls: Type["GoogleNode"], response) -> "GoogleNode":
-        state = response.status
-        name = response.name
+        state = response["status"]
+        name = response["name"]
 
         node_state_map = {
             "PROVISIONING": NodeState.PENDING,
