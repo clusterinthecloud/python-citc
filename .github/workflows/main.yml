@@ -26,4 +26,6 @@ jobs:
       - name: Run black
         run: poetry run black --check .
       - name: Run pytest
-        run: poetry run python -m pytest
+        run: poetry run coverage run --source=citc -m pytest
+      - name: Report coverage
+        run: poetry run coverage report
