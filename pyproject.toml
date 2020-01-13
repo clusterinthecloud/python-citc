@@ -7,9 +7,9 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-boto3 = "^1.10.46"
-PyYaml = "^5.2"
-oci = "^2.8.0"
+boto3 = "^1.11"
+PyYaml = "^5.3"
+oci = "^2.9.0"
 tabulate = "^0.8.6"
 google-api-python-client = "^1.7.11"
 google-auth-oauthlib = "^0.4.1"
