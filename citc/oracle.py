@@ -9,8 +9,8 @@ class NodeNotFound(Exception):
     pass
 
 
-def client_config(nodespace: dict):
-    return oci.config.from_file()
+def client(nodespace: dict):
+    return oci.core.ComputeClient(oci.config.from_file())
 
 
 class OracleNode(CloudNode):
@@ -19,7 +19,7 @@ class OracleNode(CloudNode):
         cls: Type["OracleNode"], nodename: str, client, nodespace: dict
     ) -> "OracleNode":
         matches = (
-            oci.core.ComputeClient(client)
+            client
             .list_instances(
                 compartment_id=nodespace["compartment_id"], display_name=nodename
             )
@@ -59,7 +59,7 @@ class OracleNode(CloudNode):
     @classmethod
     def all(cls, client, nodespace: dict):
         instances = (
-            oci.core.ComputeClient(client)
+            client
             .list_instances(compartment_id=nodespace["compartment_id"])
             .data
         )

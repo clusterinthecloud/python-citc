@@ -41,6 +41,11 @@ def oci_config(tmp_path):
 
 
 @pytest.fixture
+def client(oci_config):
+    return oci.core.ComputeClient(oci_config)
+
+
+@pytest.fixture
 def nodespace():
     return {
         "ad_root": "HERE-AD-",
@@ -70,7 +75,7 @@ def requests_mocker(mocker):
     return adapter
 
 
-def test_oraclenode(oci_config, nodespace, requests_mocker):
+def test_oraclenode(client, nodespace, requests_mocker):
     requests_mocker.register_uri(
         "GET",
         "/20160918/instances/?compartmentId=ocid1.compartment.oc1..aaaaa&displayName=foo",
@@ -87,22 +92,22 @@ def test_oraclenode(oci_config, nodespace, requests_mocker):
         ),
     )
 
-    node = OracleNode.from_name("foo", oci_config, nodespace)
+    node = OracleNode.from_name("foo", client, nodespace)
     assert node.name == "foo"
     assert node.state == NodeState.RUNNING
 
 
-def test_all_nodes_empty(oci_config, nodespace, requests_mocker):
+def test_all_nodes_empty(client, nodespace, requests_mocker):
     requests_mocker.register_uri(
         "GET",
         "/20160918/instances/?compartmentId=ocid1.compartment.oc1..aaaaa",
         text=json.dumps(serialise([])),
     )
 
-    assert OracleNode.all(oci_config, nodespace) == []
+    assert OracleNode.all(client, nodespace) == []
 
 
-def test_all_nodes(oci_config, nodespace, requests_mocker):
+def test_all_nodes(client, nodespace, requests_mocker):
     requests_mocker.register_uri(
         "GET",
         "/20160918/instances/?compartmentId=ocid1.compartment.oc1..aaaaa",
@@ -120,5 +125,5 @@ def test_all_nodes(oci_config, nodespace, requests_mocker):
         ),
     )
 
-    nodes = OracleNode.all(oci_config, nodespace)
+    nodes = OracleNode.all(client, nodespace)
     assert len(nodes) == 1
