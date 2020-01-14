@@ -16,7 +16,7 @@ google-auth-oauthlib = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3"
-pytest-mock = "^1.13.0"
+pytest-mock = "^2.0.0"
 black = {version = "^19.10b0", allow-prereleases = true}
 mypy = "^0.761"
 flake8 = "^3.7.9"
