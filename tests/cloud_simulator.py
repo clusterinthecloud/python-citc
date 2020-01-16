@@ -155,6 +155,15 @@ def mock_google():
             yield
 
 
+def oracle_arg_check(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        getattr(args[0].client, f.__name__)(mock.Mock(), *args[1:], **kwargs)
+        return f(*args, **kwargs)
+
+    return wrapper
+
+
 class OracleComputeClient:
     """
     A mocked version of oci.core.ComputeClient
@@ -164,13 +173,8 @@ class OracleComputeClient:
         self.client = oci.core.compute_client.ComputeClient
         self._instances: Dict[str, List[oci.core.models.Instance]] = defaultdict(list)
 
+    @oracle_arg_check
     def list_instances(self, compartment_id: str, **kwargs) -> oci.response.Response:
-        # import inspect
-        # spec = inspect.getfullargspec(OracleComputeClient.list_instances)
-        # locals_copy = locals()
-        # args = [locals_copy[a] for a in spec.args[1:]]
-        self.client.list_instances(mock.Mock(), compartment_id, **kwargs)
-
         ins = self._instances[compartment_id]
         if "display_name" in kwargs:
             ins = [i for i in ins if i.display_name == kwargs["display_name"]]
@@ -178,6 +182,7 @@ class OracleComputeClient:
             ins = [i for i in ins if i.lifecycle_state == kwargs["lifecycle_state"]]
         return oci.response.Response(200, None, ins, None)
 
+    @oracle_arg_check
     def launch_instance(
         self, launch_instance_details: oci.core.models.LaunchInstanceDetails, **kwargs
     ):
