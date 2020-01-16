@@ -107,11 +107,24 @@ def google_execute(
 
     all_parameters: Dict[str, Any] = {**path_parameters, **query, **{"body": body}}
 
-    if api == "compute":
-        if resource == "instances":
-            return getattr(GoogleComputeInstances(state), method)(**all_parameters)
+    collection_map = {"compute": {"instances": GoogleComputeInstances}}
 
-    raise NotImplementedError(f"Method {api}.{resource}.{method} is not implemented")
+    try:
+        resource_class = collection_map[api][resource]
+    except KeyError:
+        raise NotImplementedError(
+            f"Resource collection {api}.{resource} is not implemented"
+        )
+
+    resource_object = resource_class(state)
+
+    try:
+        resource_method = getattr(resource_object, method)
+    except AttributeError:
+        raise NotImplementedError(
+            f"Method {api}.{resource}.{method} is not implemented"
+        )
+    return resource_method(**all_parameters)
 
 
 @contextlib.contextmanager
