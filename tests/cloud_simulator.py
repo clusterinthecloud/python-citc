@@ -170,13 +170,17 @@ class OracleComputeClient:
         # locals_copy = locals()
         # args = [locals_copy[a] for a in spec.args[1:]]
         self.client.list_instances(mock.Mock(), compartment_id, **kwargs)
-        return oci.response.Response(200, None, self._instances[compartment_id], None)
+
+        ins = self._instances[compartment_id]
+        if "display_name" in kwargs:
+            ins = [i for i in ins if i.display_name == kwargs["display_name"]]
+        if "lifecycle_state" in kwargs:
+            ins = [i for i in ins if i.lifecycle_state == kwargs["lifecycle_state"]]
+        return oci.response.Response(200, None, ins, None)
 
     def launch_instance(
         self, launch_instance_details: oci.core.models.LaunchInstanceDetails, **kwargs
     ):
-        if "display_name" in kwargs or "lifecycle_state" in kwargs:
-            raise NotImplementedError
         instance = oci.core.models.Instance(
             availability_domain=launch_instance_details.availability_domain,
             display_name=launch_instance_details.display_name,
