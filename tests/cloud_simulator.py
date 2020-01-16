@@ -83,8 +83,12 @@ class GoogleComputeInstance(collections.abc.Mapping):
 
 
 def extract_path_parameters(path: str, template: str) -> Dict[str, str]:
-    # TODO
-    return {"project": "foo", "zone": "bar"}
+    parameters = {}
+    for p, t in zip(path.split("/"), template.split("/")):
+        if t.startswith("{") and t.endswith("}"):
+            var_name = t[1:-1]
+            parameters[var_name] = p
+    return parameters
 
 
 def google_execute(

@@ -39,3 +39,12 @@ def test_oracle_one_round_trip():
         instances = compute.list_instances("compartment_id").data
         assert len(instances) == 1
         assert instances[0].display_name == "foo"
+
+
+def test_extract_path_parameters():
+    path = "/compute/v1/projects/prfoo/zones/zbar/instances"
+    template = "/compute/v1/projects/{project}/zones/{zone}/instances"
+
+    expected = {"project": "prfoo", "zone": "zbar"}
+
+    assert extract_path_parameters(path, template) == expected
