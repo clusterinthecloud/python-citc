@@ -1,9 +1,9 @@
 import oci  # type: ignore
 import pytest  # type: ignore
+from mebula import mock_oracle
 
 from citc.oracle import OracleNode
 from citc.cloud import NodeState
-from tests.cloud_simulator import mock_oracle
 
 
 @pytest.fixture(scope="function")

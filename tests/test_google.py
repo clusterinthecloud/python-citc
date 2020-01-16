@@ -1,9 +1,9 @@
 import googleapiclient.discovery  # type: ignore
 import pytest  # type: ignore
+from mebula import mock_google
 
 from citc.google import GoogleNode
 from citc.cloud import NodeState
-from tests.cloud_simulator import mock_google
 
 
 @pytest.fixture
