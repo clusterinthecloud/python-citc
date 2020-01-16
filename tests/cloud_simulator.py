@@ -176,10 +176,11 @@ class OracleComputeClient:
     @oracle_arg_check
     def list_instances(self, compartment_id: str, **kwargs) -> oci.response.Response:
         ins = self._instances[compartment_id]
-        if "display_name" in kwargs:
-            ins = [i for i in ins if i.display_name == kwargs["display_name"]]
-        if "lifecycle_state" in kwargs:
-            ins = [i for i in ins if i.lifecycle_state == kwargs["lifecycle_state"]]
+        filters = {"availability_domain", "display_name", "lifecycle_state"}
+        for f in filters:
+            if f in kwargs:
+                ins = [i for i in ins if getattr(i, f) == kwargs[f]]
+
         return oci.response.Response(200, None, ins, None)
 
     @oracle_arg_check
