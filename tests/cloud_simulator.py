@@ -4,13 +4,14 @@ import functools
 import json
 import mock
 import urllib.request
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from typing import Any, Dict, List
 from urllib.parse import urlparse, parse_qs
 
 import googleapiclient.discovery  # type: ignore
 import oci  # type: ignore
 from googleapiclient.http import HttpMock  # type: ignore
+from googleapiclient.errors import HttpError  # type: ignore
 
 
 class GoogleState:
@@ -39,6 +40,16 @@ class GoogleComputeInstances:
         else:
             instances = self.state.instances
         return {"items": instances} if instances else {}
+
+    def get(self, project: str, zone: str, instance: str, alt="", body=None):
+        instances = [i for i in self.state.instances if i["name"] == instance]
+        if instances:
+            return instances[0]
+        else:
+            Response = namedtuple("Response", ["status", "reason"])
+            reason = f"Instance {instance} not found in {project}/{zone}"
+            resp = Response(status="404", reason=reason)
+            raise HttpError(resp, b"{}", uri="<NotImplemented>")
 
     @staticmethod
     def _filter_instances(instances, filter=""):

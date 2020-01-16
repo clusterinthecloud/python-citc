@@ -1,5 +1,7 @@
 import googleapiclient.discovery  # type: ignore
+import googleapiclient.errors  # type: ignore
 import oci  # type: ignore
+import pytest  # type: ignore
 
 from .cloud_simulator import mock_google, mock_oracle, extract_path_parameters
 
@@ -8,6 +10,14 @@ def test_google_empty():
     with mock_google():
         compute = googleapiclient.discovery.build("compute", "v1")
         assert compute.instances().list(project="foo", zone="bar").execute() == {}
+
+
+def test_google_get_missing():
+    with mock_google():
+        compute = googleapiclient.discovery.build("compute", "v1")
+        with pytest.raises(googleapiclient.errors.HttpError) as e:
+            compute.instances().get(project="p", zone="z", instance="none").execute()
+        assert e.value.resp.status == "404"
 
 
 def test_google_one_round_trip():
@@ -20,6 +30,9 @@ def test_google_one_round_trip():
         assert "items" in instances
         assert len(instances["items"]) == 1
         assert instances["items"][0]["name"] == "foo"
+
+        i = compute.instances().get(project="foo", zone="bar", instance="foo").execute()
+        assert instances["items"][0] == i
 
 
 def test_oracle_empty():
