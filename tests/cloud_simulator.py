@@ -54,9 +54,10 @@ class GoogleComputeInstances:
     @staticmethod
     def _filter_instances(instances, filter=""):
         # TODO Full query syntax from https://cloud.google.com/sdk/gcloud/reference/topic/filters
+        # Perhaps use lark
         split_filter = filter.split("=")
         if len(split_filter) > 2:
-            raise Exception
+            raise NotImplementedError
 
         if split_filter == [""]:
             yield from instances
