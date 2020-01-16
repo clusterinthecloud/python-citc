@@ -1,46 +1,44 @@
 import collections.abc
 import contextlib
 import functools
+import json
 import mock
+import urllib.request
 from collections import defaultdict
-from typing import Any, Callable, Dict, List
+from typing import Any, Dict, List
+from urllib.parse import urlparse, parse_qs
 
+import googleapiclient.discovery  # type: ignore
 import oci  # type: ignore
+from googleapiclient.http import HttpMock  # type: ignore
 
 
-class DummyAsync:
-    def __init__(self, function: Callable[[], Any]):
-        self.function = function
-
-    def execute(self) -> Any:
-        return self.function()
+class GoogleState:
+    def __init__(self):
+        self.instances = []
 
 
-class GoogleComputeClient:
-    """
-    A mocked version of googleapiclient.discovery.build("compute", "v1", ...)
-    """
-
-    def __init__(self, *args, **kwargs):
-        self._instances = []
-
-    def instances(self):
-        return GoogleComputeInstances(self)
+@functools.lru_cache(maxsize=128)
+def google_api_client(serviceName: str, version: str, *args, **kwargs):
+    url = f"https://www.googleapis.com/discovery/v1/apis/{serviceName}/{version}/rest"
+    data = urllib.request.urlopen(url).read().decode()
+    return googleapiclient.discovery.build_from_document(data, http=HttpMock())
 
 
 class GoogleComputeInstances:
-    def __init__(self, client: GoogleComputeClient):
-        self.client = client
+    """
+    A reimplementation of the Google cloud server-side for the ``instances`` resource
+    """
 
-    def list(self, project: str, zone: str, filter=""):
-        def wrap_response():
-            instances = list(self._filter_instances(self.client._instances, filter))
-            if instances:
-                return {"items": instances}
-            else:
-                return {}
+    def __init__(self, state: GoogleState):
+        self.state = state
 
-        return DummyAsync(wrap_response)
+    def list(self, project: str, zone: str, filter=None, alt="", body=None):
+        if filter is not None:
+            instances = list(self._filter_instances(self.state.instances, filter[0]))
+        else:
+            instances = self.state.instances
+        return {"items": instances} if instances else {}
 
     @staticmethod
     def _filter_instances(instances, filter=""):
@@ -57,15 +55,18 @@ class GoogleComputeInstances:
             if i[split_filter[0]] == split_filter[1]:
                 yield i
 
-    def insert(self, project: str, zone: str, body):
-        inserter = functools.partial(
-            self.client._instances.append, GoogleComputeNode(body)
-        )
-        return DummyAsync(inserter)
+    def insert(self, project: str, zone: str, body, alt=""):
+        print("inserting", body)
+        return self.state.instances.append(GoogleComputeInstance(body))
 
 
-class GoogleComputeNode(collections.abc.Mapping):
+class GoogleComputeInstance(collections.abc.Mapping):
+    """
+    A dictionary version of the Instance resource
+    """
+
     def __init__(self, body):
+        # Should match google_api_client("compute", "v1").instances()._schema.get("Instance")
         self.data = {}
         self.data["name"] = body["name"]
         self.data["tags"] = body["tags"]
@@ -81,18 +82,66 @@ class GoogleComputeNode(collections.abc.Mapping):
         return len(self.data)
 
 
+def extract_path_parameters(path: str, template: str) -> Dict[str, str]:
+    # TODO
+    return {"project": "foo", "zone": "bar"}
+
+
+def google_execute(
+    request: googleapiclient.http.HttpRequest, state: GoogleState
+) -> dict:
+    api, resource, method = request.methodId.split(".")
+    url = urlparse(request.uri)
+    path = url.path
+    query = parse_qs(url.query)
+    body = json.loads(request.body) if request.body else {}
+
+    api_version = path.split("/")[2]  # Hacky, I know
+    r = getattr(google_api_client(api, api_version), resource)()
+    base_path = urlparse(r._baseUrl).path
+    method_schema = r._resourceDesc["methods"][method]
+    method_path = method_schema["path"]
+    path_template = base_path + method_path
+
+    path_parameters = extract_path_parameters(method_path, path_template)
+
+    all_parameters: Dict[str, Any] = {**path_parameters, **query, **{"body": body}}
+
+    if api == "compute":
+        if resource == "instances":
+            return getattr(GoogleComputeInstances(state), method)(**all_parameters)
+
+    raise NotImplementedError(f"Method {api}.{resource}.{method} is not implemented")
+
+
 @contextlib.contextmanager
 def mock_google():
-    def build_google_client(service_name, version, **kwargs):
-        if service_name == "compute":
-            if version != "v1":
-                raise Exception
-            return GoogleComputeClient()
-        else:
-            raise Exception
+    state = GoogleState()
+    with mock.patch("googleapiclient.discovery.build", new=google_api_client):
+        with mock.patch.object(
+            googleapiclient.http.HttpRequest,
+            "execute",
+            new=functools.partialmethod(google_execute, state),
+        ):
+            yield
 
-    with mock.patch("googleapiclient.discovery.build", new=build_google_client):
-        yield
+
+def test_google_empty():
+    with mock_google():
+        compute = googleapiclient.discovery.build("compute", "v1")
+        assert compute.instances().list(project="foo", zone="bar").execute() == {}
+
+
+def test_google_one_round_trip():
+    with mock_google():
+        compute = googleapiclient.discovery.build("compute", "v1")
+        compute.instances().insert(
+            project="foo", zone="bar", body={"name": "foo", "tags": {}}
+        ).execute()
+        instances = compute.instances().list(project="foo", zone="bar").execute()
+        assert "items" in instances
+        assert len(instances["items"]) == 1
+        assert instances["items"][0]["name"] == "foo"
 
 
 class OracleComputeClient:
@@ -124,3 +173,22 @@ class OracleComputeClient:
 def mock_oracle():
     with mock.patch("oci.core.ComputeClient", new=OracleComputeClient):
         yield
+
+
+def test_oracle_empty():
+    with mock_oracle():
+        compute = oci.core.ComputeClient(config={})
+        assert compute.list_instances("foo") == []
+
+
+def test_oracle_one_round_trip():
+    with mock_oracle():
+        compute = oci.core.ComputeClient(config={})
+        instance_details = oci.core.models.LaunchInstanceDetails(
+            compartment_id="compartment_id", display_name="foo",
+        )
+        compute.launch_instance(instance_details)
+
+        instances = compute.list_instances("foo").data
+        assert len(instances) == 1
+        assert instances[0]["name"] == "foo"

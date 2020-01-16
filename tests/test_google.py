@@ -17,7 +17,7 @@ def nodespace():
 @pytest.fixture(scope="function")
 def client():
     with mock_google():
-        return googleapiclient.discovery.build("compute", "v1")
+        yield googleapiclient.discovery.build("compute", "v1")
 
 
 def launch_node(nodename: str, client, nodespace):
@@ -28,6 +28,7 @@ def launch_node(nodename: str, client, nodespace):
 
     project = nodespace["compartment_id"]
     zone = nodespace["zone"]
+    print(client.instances().insert(project=project, zone=zone, body=config).execute)
     client.instances().insert(project=project, zone=zone, body=config).execute()
 
 
