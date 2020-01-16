@@ -161,9 +161,15 @@ class OracleComputeClient:
     """
 
     def __init__(self, config: dict, **kwargs):
+        self.client = oci.core.compute_client.ComputeClient
         self._instances: Dict[str, List[oci.core.models.Instance]] = defaultdict(list)
 
     def list_instances(self, compartment_id: str, **kwargs) -> oci.response.Response:
+        # import inspect
+        # spec = inspect.getfullargspec(OracleComputeClient.list_instances)
+        # locals_copy = locals()
+        # args = [locals_copy[a] for a in spec.args[1:]]
+        self.client.list_instances(mock.Mock(), compartment_id, **kwargs)
         return oci.response.Response(200, None, self._instances[compartment_id], None)
 
     def launch_instance(
