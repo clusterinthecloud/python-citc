@@ -1,5 +1,6 @@
 import collections.abc
 import contextlib
+import datetime
 import functools
 import json
 import mock
@@ -156,6 +157,11 @@ def mock_google():
 
 
 def oracle_arg_check(f):
+    """
+    A decorator which calls a mocked version of an OCI function to use
+    it to check the arguments passed.
+    """
+
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         getattr(args[0].client, f.__name__)(mock.Mock(), *args[1:], **kwargs)
@@ -181,6 +187,18 @@ class OracleComputeClient:
             if f in kwargs:
                 ins = [i for i in ins if getattr(i, f) == kwargs[f]]
 
+        if "sort_by" in kwargs:
+            if "sort_order" in kwargs:
+                reverse = kwargs["sort_order"] == "DESC"
+            else:
+                reverse = None
+            if kwargs["sort_by"] == "TIMECREATED":
+                reverse = reverse if reverse is not None else True
+                ins = sorted(ins, key=lambda i: i.time_created, reverse=reverse)
+            elif kwargs["sort_by"] == "DISPLAYNAME":
+                reverse = reverse if reverse is not None else False
+                ins = sorted(ins, key=lambda i: i.display_name, reverse=reverse)
+
         return oci.response.Response(200, None, ins, None)
 
     @oracle_arg_check
@@ -192,6 +210,7 @@ class OracleComputeClient:
             display_name=launch_instance_details.display_name,
             freeform_tags=launch_instance_details.freeform_tags,
             lifecycle_state="RUNNING",
+            time_created=datetime.datetime.now(),
         )
         self._instances[launch_instance_details.compartment_id].append(instance)
 
