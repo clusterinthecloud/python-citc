@@ -103,7 +103,7 @@ def google_execute(
     method_path = method_schema["path"]
     path_template = base_path + method_path
 
-    path_parameters = extract_path_parameters(method_path, path_template)
+    path_parameters = extract_path_parameters(path, path_template)
 
     all_parameters: Dict[str, Any] = {**path_parameters, **query, **{"body": body}}
 
