@@ -22,7 +22,7 @@ mypy = "^0.761"
 flake8 = "^3.7.9"
 moto = "^1.3.14"
 coverage = "^5.0.3"
-mebula = {version = "^0.1.2", allow-prereleases = true, extras = ["azure", "google", "oracle"]}
+mebula = {version = "^0.2.2", allow-prereleases = true, extras = ["azure", "google", "oracle"]}
 
 [tool.poetry.scripts]
 watchdog = 'citc.watchdog:main'
