@@ -47,12 +47,14 @@ class SlurmNode:
     state: str
     state_flag: Optional[str]
     features: dict
+    reason: str
 
-    def __init__(self, name, state, features, state_flag):
+    def __init__(self, name, state, features, state_flag, reason):
         self.name = name
         self.state = state
         self.state_flag = state_flag
         self.features = features
+        self.reason = reason
 
     @classmethod
     def from_name(cls: Type["SlurmNode"], nodename: str) -> "SlurmNode":
@@ -76,8 +78,9 @@ class SlurmNode:
             state_flag = None
 
         features = parse_features(data["features"])
+        reason = data["reason"]
 
-        return cls(name=nodename, state=state, state_flag=state_flag, features=features)
+        return cls(name=nodename, state=state, state_flag=state_flag, features=features, reason=reason)
 
     def resume(self):
         subprocess.run(

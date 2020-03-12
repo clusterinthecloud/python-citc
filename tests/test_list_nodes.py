@@ -8,8 +8,8 @@ from citc.slurm import SlurmNode
 
 def test_create_table():
     slurm_nodes = [
-        SlurmNode(name="foo-1", state="idle", state_flag=None, features={}),
-        SlurmNode(name="foo-2", state="idle", state_flag="~", features={}),
+        SlurmNode(name="foo-1", state="idle", state_flag=None, features={}, reason=""),
+        SlurmNode(name="foo-2", state="idle", state_flag="~", features={}, reason=""),
     ]
     cloud_nodes = [AwsNode(name="foo-1", state=NodeState.RUNNING)]
     table, headers = create_table(slurm_nodes, cloud_nodes)
@@ -21,7 +21,7 @@ def test_create_table():
 
 
 def test_print_table():
-    slurm_nodes = [SlurmNode(name="foo-1", state="idle", state_flag=None, features={})]
+    slurm_nodes = [SlurmNode(name="foo-1", state="idle", state_flag=None, features={}, reason="")]
     cloud_nodes = [AwsNode(name="foo-1", state=NodeState.RUNNING)]
     table_data = create_table(slurm_nodes, cloud_nodes)
     print(tabulate(table_data))
