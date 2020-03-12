@@ -80,7 +80,13 @@ class SlurmNode:
         features = parse_features(data["features"])
         reason = data["reason"]
 
-        return cls(name=nodename, state=state, state_flag=state_flag, features=features, reason=reason)
+        return cls(
+            name=nodename,
+            state=state,
+            state_flag=state_flag,
+            features=features,
+            reason=reason,
+        )
 
     def resume(self):
         subprocess.run(
