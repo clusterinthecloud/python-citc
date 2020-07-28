@@ -51,10 +51,8 @@ def get_types_info():
         ec2 = aws.ec2_client(nodespace)
         return aws.get_types_info(ec2)
     elif csp == "google":
-        client = google.client(nodespace)
         return []
     elif csp == "oracle":
-        client = oracle.client(nodespace)
         return []
     elif csp == "azure":
         return []
