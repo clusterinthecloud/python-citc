@@ -7,16 +7,16 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-boto3 = "^1.11"
+boto3 = "^1.14"
 PyYaml = "^5.3"
-oci = "^2.9.0"
+oci = "^2.18.0"
 tabulate = "^0.8.6"
-google-api-python-client = "^1.7.11"
+google-api-python-client = "^1.10.0"
 google-auth-oauthlib = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.3"
-pytest-mock = "^3.0.0"
+pytest = "^5.4"
+pytest-mock = "^3.2.0"
 black = {version = "^19.10b0", allow-prereleases = true}
 mypy = "^0.782"
 flake8 = "^3.7.9"
