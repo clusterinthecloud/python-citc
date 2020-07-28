@@ -37,3 +37,26 @@ def get_cloud_nodes() -> List[cloud.CloudNode]:
         raise Exception(f"Cloud provider {csp} not found")
 
     return cloud_nodes
+
+
+def get_types_info():
+    """
+    Returns:
+        list: a list of node info dictionaries
+    """
+    nodespace = get_nodespace()
+
+    csp = nodespace["csp"]
+    if csp == "aws":
+        ec2 = aws.ec2_client(nodespace)
+        return aws.get_types_info(ec2)
+    elif csp == "google":
+        client = google.client(nodespace)
+        return []
+    elif csp == "oracle":
+        client = oracle.client(nodespace)
+        return []
+    elif csp == "azure":
+        return []
+
+    raise Exception(f"Cloud provider {csp} not found")

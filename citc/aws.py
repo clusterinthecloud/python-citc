@@ -1,4 +1,5 @@
 import configparser
+import math
 from typing import Type
 
 import boto3  # type: ignore
@@ -73,3 +74,20 @@ class AwsNode(CloudNode):
             instances = []
 
         return [cls.from_response(instance) for instance in instances]
+
+
+def get_types_info(client):
+    instances = {
+        i["InstanceType"]: i
+        for page in client.get_paginator('describe_instance_types').paginate()
+        for i in page["InstanceTypes"]
+    }
+    return {
+        s: {
+            "memory": int(math.pow(d["MemoryInfo"]["SizeInMiB"], 0.7) * 0.9 + 500),
+            "cores_per_socket": d["VCpuInfo"]["DefaultCores"],
+            "threads_per_core": d["VCpuInfo"]["DefaultThreadsPerCore"],
+            "arch": d["ProcessorInfo"]["SupportedArchitectures"][0],
+        }
+        for s, d in instances.items()
+    }

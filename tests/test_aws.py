@@ -2,7 +2,7 @@ import boto3  # type: ignore
 import pytest  # type: ignore
 from moto import mock_ec2  # type: ignore
 
-from citc.aws import AwsNode
+from citc.aws import AwsNode, get_types_info
 from citc.cloud import NodeState
 
 
@@ -54,3 +54,10 @@ def test_all_nodes(ec2, nodespace):
     launch_node("foo", ec2, nodespace)
     nodes = AwsNode.all(ec2, nodespace)
     assert len(nodes) == 1
+
+
+@pytest.mark.xfail(strict=True, reason="Waiting on https://github.com/spulec/moto/pull/3194")
+def test_get_types_info(ec2):
+    info = get_types_info(ec2)
+    assert "t1.micro" in info
+    assert isinstance(info["t1.micro"]["memory"], int)
