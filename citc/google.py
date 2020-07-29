@@ -1,3 +1,4 @@
+import math
 import os
 from pathlib import Path
 from typing import Type
@@ -92,3 +93,15 @@ class GoogleNode(CloudNode):
             instances = []
 
         return [cls.from_response(instance) for instance in instances]
+
+
+def get_types_info(client, nodespace):
+    instances = client.machineTypes().list(project=nodespace["compartment_id"], zone=nodespace["zone"]).execute()["items"]
+    return {
+        s: {
+            "memory": int(math.pow(d["memoryMb"], 0.7) * 0.9 + 500),
+            "cores_per_socket": d["guestCpus"],
+            "threads_per_core": "1",
+        }
+        for s, d in instances.items()
+    }
