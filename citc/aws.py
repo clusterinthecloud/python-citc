@@ -79,7 +79,7 @@ class AwsNode(CloudNode):
 def get_types_info(client):
     instances = {
         i["InstanceType"]: i
-        for page in client.get_paginator('describe_instance_types').paginate()
+        for page in client.get_paginator("describe_instance_types").paginate()
         for i in page["InstanceTypes"]
     }
     return {

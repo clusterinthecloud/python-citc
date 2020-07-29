@@ -56,7 +56,9 @@ def test_all_nodes(ec2, nodespace):
     assert len(nodes) == 1
 
 
-@pytest.mark.xfail(strict=True, reason="Waiting on https://github.com/spulec/moto/pull/3194")
+@pytest.mark.xfail(
+    strict=True, reason="Waiting on https://github.com/spulec/moto/pull/3194"
+)
 def test_get_types_info(ec2):
     info = get_types_info(ec2)
     assert "t1.micro" in info
