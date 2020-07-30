@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "citc"
-version = "0.3.1"
+version = "0.3.2"
 description = ""
 authors = ["Matt Williams <matt@milliams.com>"]
 license = "MIT"
