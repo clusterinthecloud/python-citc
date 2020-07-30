@@ -82,10 +82,10 @@ def get_types_info(client):
         for page in client.get_paginator("describe_instance_types").paginate()
         for i in page["InstanceTypes"]
     }
-    aws_mem = d["MemoryInfo"]["SizeInMiB"]
     return {
         s: {
-            "memory": aws_mem - int(math.pow(aws_mem, 0.7) * 0.9 + 500),
+            "memory": d["MemoryInfo"]["SizeInMiB"]
+            - int(math.pow(d["MemoryInfo"]["SizeInMiB"], 0.7) * 0.9 + 500),
             "cores_per_socket": d["VCpuInfo"]["DefaultCores"],
             "threads_per_core": d["VCpuInfo"]["DefaultThreadsPerCore"],
             "arch": d["ProcessorInfo"]["SupportedArchitectures"][0],
