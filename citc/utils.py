@@ -51,10 +51,10 @@ def get_types_info():
         ec2 = aws.ec2_client(nodespace)
         return aws.get_types_info(ec2)
     elif csp == "google":
-        return []
+        raise NotImplementedError()
     elif csp == "oracle":
-        return []
+        raise NotImplementedError()
     elif csp == "azure":
-        return []
+        raise NotImplementedError()
 
     raise Exception(f"Cloud provider {csp} not found")
