@@ -86,7 +86,9 @@ def get_types_info(client):
         s: {
             "memory": d["MemoryInfo"]["SizeInMiB"]
             - int(math.pow(d["MemoryInfo"]["SizeInMiB"], 0.7) * 0.9 + 500),
-            "cores_per_socket": d["VCpuInfo"].get("DefaultCores", d["VCpuInfo"]["DefaultVCpus"]),
+            "cores_per_socket": d["VCpuInfo"].get(
+                "DefaultCores", d["VCpuInfo"]["DefaultVCpus"]
+            ),
             "threads_per_core": d["VCpuInfo"].get("DefaultThreadsPerCore", 1),
             "arch": d["ProcessorInfo"]["SupportedArchitectures"][0],
         }
