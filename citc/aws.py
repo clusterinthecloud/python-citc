@@ -1,17 +1,19 @@
 import configparser
 import math
-from typing import Type
+from typing import Type, Dict
 
-import boto3  # type: ignore
+import boto3
+from mypy_boto3_ec2 import EC2Client
 
 from .cloud import CloudNode, NodeState
+from .utils import NodeTypeInfo
 
 
 class NodeNotFound(Exception):
     pass
 
 
-def ec2_client(nodespace: dict):
+def ec2_client(nodespace: dict) -> EC2Client:
     config = configparser.ConfigParser()
     config.read("/home/slurm/aws-credentials.csv")
     return boto3.client(
@@ -61,7 +63,7 @@ class AwsNode(CloudNode):
         return cls(name=name, state=node_state)
 
     @classmethod
-    def all(cls, client, nodespace: dict):
+    def all(cls, client: EC2Client, nodespace: dict):
         result = client.describe_instances(
             Filters=[
                 {"Name": "tag:cluster", "Values": [nodespace["cluster_id"]]},
@@ -76,7 +78,7 @@ class AwsNode(CloudNode):
         return [cls.from_response(instance) for instance in instances]
 
 
-def get_types_info(client):
+def get_types_info(client: EC2Client) -> Dict[str, NodeTypeInfo]:
     instances = {
         i["InstanceType"]: i
         for page in client.get_paginator("describe_instance_types").paginate()

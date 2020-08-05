@@ -1,4 +1,4 @@
-import boto3  # type: ignore
+import boto3
 import pytest  # type: ignore
 from moto import mock_ec2  # type: ignore
 
