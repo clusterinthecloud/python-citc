@@ -34,7 +34,15 @@ class AwsNode(CloudNode):
                 {"Name": "tag:Name", "Values": [nodename]},
                 {"Name": "tag:cluster", "Values": [nodespace["cluster_id"]]},
                 {"Name": "tag:type", "Values": ["compute"]},
-                # TODO filter on not-terminated state
+                {
+                    "Name": "instance-state-name",
+                    "Values": [
+                        "pending",
+                        "running",
+                        "shutting-down",
+                        "stopping",
+                    ],  # not "stopped" or terminated
+                },
             ]
         )
         # TODO check for multiple returned matches

@@ -35,7 +35,7 @@ class GoogleNode(CloudNode):
     def from_name(
         cls: Type["GoogleNode"], nodename: str, client, nodespace: dict
     ) -> "GoogleNode":
-        filter_clause = f"name={nodename}"
+        filter_clause = f"name={nodename} AND status=(PROVISIONING, STAGING, RUNNING, STOPPING, SUSPENDING, SUSPENDED, REPAIRING)"
         result = (
             client.instances()
             .list(
@@ -45,7 +45,6 @@ class GoogleNode(CloudNode):
             )
             .execute()
         )
-        # TODO filter on not-terminated state
         # TODO check for multiple returned matches
         if "items" in result:
             instance = result["items"][0]
