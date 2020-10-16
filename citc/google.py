@@ -74,7 +74,7 @@ class GoogleNode(CloudNode):
         }
         node_state = node_state_map.get(state, NodeState.OTHER)
 
-        ip = response['networkInterfaces'][0]['networkIP']
+        ip = response["networkInterfaces"][0]["networkIP"]
 
         return cls(name=name, state=node_state, ip=ip)
 
