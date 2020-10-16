@@ -35,7 +35,10 @@ class GoogleNode(CloudNode):
     def from_name(
         cls: Type["GoogleNode"], nodename: str, client, nodespace: dict
     ) -> "GoogleNode":
-        filter_clause = f"name={nodename} AND status=(PROVISIONING, STAGING, RUNNING, STOPPING, SUSPENDING, SUSPENDED, REPAIRING)"
+        filter_clause = (
+            f"name={nodename} AND "
+            "status=(PROVISIONING, STAGING, RUNNING, STOPPING, SUSPENDING, SUSPENDED, REPAIRING)"
+        )
         result = (
             client.instances()
             .list(
@@ -70,7 +73,9 @@ class GoogleNode(CloudNode):
         }
         node_state = node_state_map.get(state, NodeState.OTHER)
 
-        return cls(name=name, state=node_state)
+        ip = response['networkInterfaces'][0]['networkIP']
+
+        return cls(name=name, state=node_state, ip=ip)
 
     @classmethod
     def all(cls, client, nodespace: dict):

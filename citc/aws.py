@@ -68,7 +68,9 @@ class AwsNode(CloudNode):
         }
         node_state = node_state_map.get(state, NodeState.OTHER)
 
-        return cls(name=name, state=node_state)
+        ip = response["PrivateIpAddress"]
+
+        return cls(name=name, state=node_state, ip=ip)
 
     @classmethod
     def all(cls, client: EC2Client, nodespace: dict):

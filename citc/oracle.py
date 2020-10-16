@@ -9,15 +9,12 @@ class NodeNotFound(Exception):
     pass
 
 
-def client(nodespace: dict):
-    return oci.core.ComputeClient(oci.config.from_file())
-
-
 class OracleNode(CloudNode):
     @classmethod
     def from_name(
-        cls: Type["OracleNode"], nodename: str, client, nodespace: dict
+        cls: Type["OracleNode"], nodename: str, config: dict, nodespace: dict
     ) -> "OracleNode":
+        client = oci.core.ComputeClient(config)
         matches = client.list_instances(
             compartment_id=nodespace["compartment_id"], display_name=nodename
         ).data
@@ -28,12 +25,11 @@ class OracleNode(CloudNode):
         if len(still_exist) > 1:
             print("ERROR!")  # TODO
 
-        return cls.from_response(still_exist[0])
+        return cls.from_response(still_exist[0], config)
 
     @classmethod
     def from_response(
-        cls: Type["OracleNode"], response: oci.core.models.Instance
-    ) -> "OracleNode":
+        cls: Type["OracleNode"], response: oci.core.models.Instance, config: dict) -> "OracleNode":
         state = response.lifecycle_state
         name = response.display_name
 
@@ -50,10 +46,18 @@ class OracleNode(CloudNode):
         }
         node_state = node_state_map.get(state, NodeState.OTHER)
 
-        return cls(name=name, state=node_state)
+        compute_client = oci.core.ComputeClient(config)
+        virtual_network_client = oci.core.VirtualNetworkClient(config)
+
+        node_id = response.id
+        vnic_id = compute_client.list_vnic_attachments(response.compartment_id, instance_id=node_id).data[0].vnic_id
+        ip = virtual_network_client.get_vnic(vnic_id).data.private_ip
+
+        return cls(name=name, state=node_state, ip=ip)
 
     @classmethod
-    def all(cls, client, nodespace: dict):
+    def all(cls, config, nodespace: dict):
+        client = oci.core.ComputeClient(config)
         instances = client.list_instances(
             compartment_id=nodespace["compartment_id"]
         ).data
@@ -63,4 +67,4 @@ class OracleNode(CloudNode):
             if instance.freeform_tags.get("type") == "compute"
         ]
 
-        return [cls.from_response(instance) for instance in nodes]
+        return [cls.from_response(instance, config) for instance in nodes]

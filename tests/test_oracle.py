@@ -6,12 +6,6 @@ from citc.oracle import OracleNode
 from citc.cloud import NodeState
 
 
-@pytest.fixture(scope="function")
-def client():
-    with mock_oracle():
-        return oci.core.ComputeClient(config={})
-
-
 @pytest.fixture
 def nodespace():
     return {
@@ -28,21 +22,25 @@ def launch_node(nodename: str, client, nodespace):
         display_name=nodename,
         freeform_tags={"type": "compute"},
     )
+    client = oci.core.ComputeClient({})
     client.launch_instance(instance_details)
 
 
-def test_oraclenode(client, nodespace):
-    launch_node("foo", client, nodespace)
-    node = OracleNode.from_name("foo", client, nodespace)
-    assert node.name == "foo"
-    assert node.state == NodeState.RUNNING
+def test_oraclenode(nodespace):
+    with mock_oracle():
+        launch_node("foo", {}, nodespace)
+        node = OracleNode.from_name("foo", {}, nodespace)
+        assert node.name == "foo"
+        assert node.state == NodeState.RUNNING
 
 
-def test_all_nodes_empty(client, nodespace):
-    assert OracleNode.all(client, nodespace) == []
+def test_all_nodes_empty(nodespace):
+    with mock_oracle():
+        assert OracleNode.all({}, nodespace) == []
 
 
-def test_all_nodes(client, nodespace):
-    launch_node("foo", client, nodespace)
-    nodes = OracleNode.all(client, nodespace)
-    assert len(nodes) == 1
+def test_all_nodes(nodespace):
+    with mock_oracle():
+        launch_node("foo", {}, nodespace)
+        nodes = OracleNode.all({}, nodespace)
+        assert len(nodes) == 1

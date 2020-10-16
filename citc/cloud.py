@@ -34,10 +34,12 @@ class NodeState(Enum):
 class CloudNode(ABC):
     name: str
     state: NodeState
+    ip: str
 
-    def __init__(self, name, state):
+    def __init__(self, name, state, ip):
         self.name = name
         self.state = state
+        self.ip = ip
 
     @classmethod
     @abstractmethod
