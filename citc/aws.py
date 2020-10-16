@@ -5,8 +5,7 @@ from typing import Type, Dict
 import boto3
 from mypy_boto3_ec2 import EC2Client
 
-from .cloud import CloudNode, NodeState
-from .utils import NodeTypeInfo
+from .cloud import CloudNode, NodeState, NodeTypeInfo
 
 
 class NodeNotFound(Exception):

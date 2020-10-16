@@ -1,4 +1,4 @@
-from typing import Dict, List, TypedDict, Optional
+from typing import Dict, List
 
 import yaml
 
@@ -39,14 +39,7 @@ def get_cloud_nodes() -> List[cloud.CloudNode]:
     return cloud_nodes
 
 
-class NodeTypeInfo(TypedDict):
-    memory: int
-    cores_per_socket: int
-    threads_per_core: int
-    arch: Optional[str]
-
-
-def get_types_info() -> Dict[str, NodeTypeInfo]:
+def get_types_info() -> Dict[str, cloud.NodeTypeInfo]:
     """
     Returns:
         list: a list of node info dictionaries

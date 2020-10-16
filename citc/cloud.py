@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum, auto
+from typing import TypedDict, Optional
 
 
 class NodeState(Enum):
@@ -45,3 +46,10 @@ class CloudNode(ABC):
     @abstractmethod
     def all(cls, client, nodespace: dict):
         pass
+
+
+class NodeTypeInfo(TypedDict):
+    memory: int
+    cores_per_socket: int
+    threads_per_core: int
+    arch: Optional[str]
