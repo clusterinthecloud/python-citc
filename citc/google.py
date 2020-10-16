@@ -76,7 +76,7 @@ class GoogleNode(CloudNode):
 
         ip = response["networkInterfaces"][0]["networkIP"]
 
-        return cls(name=name, state=node_state, ip=ip)
+        return cls(name=name, state=node_state, ip=ip, id=response["id"])
 
     @classmethod
     def all(cls, client, nodespace: dict):

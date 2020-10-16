@@ -69,7 +69,7 @@ class AwsNode(CloudNode):
 
         ip = response["PrivateIpAddress"]
 
-        return cls(name=name, state=node_state, ip=ip)
+        return cls(name=name, state=node_state, ip=ip, id=response["InstanceId"])
 
     @classmethod
     def all(cls, client: EC2Client, nodespace: dict):

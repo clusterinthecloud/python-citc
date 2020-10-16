@@ -36,11 +36,13 @@ class CloudNode(ABC):
     name: str
     state: NodeState
     ip: str
+    id: str
 
-    def __init__(self, name, state, ip):
+    def __init__(self, name, state, ip, id):
         self.name = name
         self.state = state
         self.ip = ip
+        self.id = id
 
     @classmethod
     @abstractmethod

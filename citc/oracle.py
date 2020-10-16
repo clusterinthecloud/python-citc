@@ -64,7 +64,7 @@ class OracleNode(CloudNode):
         )
         ip = virtual_network_client.get_vnic(vnic_id).data.private_ip
 
-        return cls(name=name, state=node_state, ip=ip)
+        return cls(name=name, state=node_state, ip=ip, id=node_id)
 
     @classmethod
     def all(cls, config, nodespace: dict):
