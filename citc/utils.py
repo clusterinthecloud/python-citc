@@ -29,8 +29,8 @@ def get_cloud_nodes() -> List[cloud.CloudNode]:
         client = google.client(nodespace)
         cloud_nodes = google.GoogleNode.all(client, nodespace)
     elif csp == "oracle":
-        client = oracle.client(nodespace)
-        cloud_nodes = oracle.OracleNode.all(client, nodespace)
+        config = oracle.get_config()
+        cloud_nodes = oracle.OracleNode.all(config, nodespace)
     elif csp == "azure":
         cloud_nodes = []
     else:

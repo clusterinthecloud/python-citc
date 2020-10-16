@@ -9,6 +9,10 @@ class NodeNotFound(Exception):
     pass
 
 
+def get_config():
+    return oci.config.from_file()
+
+
 class OracleNode(CloudNode):
     @classmethod
     def from_name(
