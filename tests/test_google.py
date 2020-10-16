@@ -2,7 +2,7 @@ import googleapiclient.discovery  # type: ignore
 import pytest  # type: ignore
 from mebula import mock_google
 
-from citc.google import GoogleNode
+from citc.google import GoogleNode, get_types_info
 from citc.cloud import NodeState
 
 
@@ -47,3 +47,9 @@ def test_all_nodes(client, nodespace):
     launch_node("foo", client, nodespace)
     nodes = GoogleNode.all(client, nodespace)
     assert len(nodes) == 1
+
+
+def test_get_types_info(client, nodespace):
+    info = get_types_info(client, nodespace)
+    assert "n1-standard-1" in info
+    assert isinstance(info["n1-standard-1"]["memory"], int)

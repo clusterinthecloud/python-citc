@@ -9,6 +9,10 @@ class NodeNotFound(Exception):
     pass
 
 
+def get_config():
+    return oci.config.from_file()
+
+
 class OracleNode(CloudNode):
     @classmethod
     def from_name(
@@ -29,7 +33,8 @@ class OracleNode(CloudNode):
 
     @classmethod
     def from_response(
-        cls: Type["OracleNode"], response: oci.core.models.Instance, config: dict) -> "OracleNode":
+        cls: Type["OracleNode"], response: oci.core.models.Instance, config: dict
+    ) -> "OracleNode":
         state = response.lifecycle_state
         name = response.display_name
 
@@ -50,7 +55,13 @@ class OracleNode(CloudNode):
         virtual_network_client = oci.core.VirtualNetworkClient(config)
 
         node_id = response.id
-        vnic_id = compute_client.list_vnic_attachments(response.compartment_id, instance_id=node_id).data[0].vnic_id
+        vnic_id = (
+            compute_client.list_vnic_attachments(
+                response.compartment_id, instance_id=node_id
+            )
+            .data[0]
+            .vnic_id
+        )
         ip = virtual_network_client.get_vnic(vnic_id).data.private_ip
 
         return cls(name=name, state=node_state, ip=ip)

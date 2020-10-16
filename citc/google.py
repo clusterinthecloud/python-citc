@@ -1,3 +1,4 @@
+import math
 import os
 from pathlib import Path
 from typing import Type
@@ -73,7 +74,7 @@ class GoogleNode(CloudNode):
         }
         node_state = node_state_map.get(state, NodeState.OTHER)
 
-        ip = response['networkInterfaces'][0]['networkIP']
+        ip = response["networkInterfaces"][0]["networkIP"]
 
         return cls(name=name, state=node_state, ip=ip)
 
@@ -92,3 +93,19 @@ class GoogleNode(CloudNode):
             instances = []
 
         return [cls.from_response(instance) for instance in instances]
+
+
+def get_types_info(client, nodespace):
+    machine_types = (
+        client.machineTypes()
+        .list(project=nodespace["compartment_id"], zone=nodespace["zone"])
+        .execute()["items"]
+    )
+    return {
+        mt["name"]: {
+            "memory": int(math.pow(mt["memoryMb"], 0.7) * 0.9 + 500),
+            "cores_per_socket": mt["guestCpus"],
+            "threads_per_core": "1",
+        }
+        for mt in machine_types
+    }

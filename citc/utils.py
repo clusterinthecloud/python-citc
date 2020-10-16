@@ -29,8 +29,8 @@ def get_cloud_nodes() -> List[cloud.CloudNode]:
         client = google.client(nodespace)
         cloud_nodes = google.GoogleNode.all(client, nodespace)
     elif csp == "oracle":
-        client = oracle.client(nodespace)
-        cloud_nodes = oracle.OracleNode.all(client, nodespace)
+        config = oracle.get_config()
+        cloud_nodes = oracle.OracleNode.all(config, nodespace)
     elif csp == "azure":
         cloud_nodes = []
     else:
@@ -58,7 +58,8 @@ def get_types_info() -> Dict[str, NodeTypeInfo]:
         ec2 = aws.ec2_client(nodespace)
         return aws.get_types_info(ec2)
     elif csp == "google":
-        raise NotImplementedError()
+        client = google.client(nodespace)
+        return google.get_types_info(client, nodespace)
     elif csp == "oracle":
         raise NotImplementedError()
     elif csp == "azure":
