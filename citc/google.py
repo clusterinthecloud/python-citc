@@ -96,16 +96,16 @@ class GoogleNode(CloudNode):
 
 
 def get_types_info(client, nodespace):
-    instances = (
+    machine_types = (
         client.machineTypes()
         .list(project=nodespace["compartment_id"], zone=nodespace["zone"])
         .execute()["items"]
     )
     return {
-        s: {
-            "memory": int(math.pow(d["memoryMb"], 0.7) * 0.9 + 500),
-            "cores_per_socket": d["guestCpus"],
+        mt["name"]: {
+            "memory": int(math.pow(mt["memoryMb"], 0.7) * 0.9 + 500),
+            "cores_per_socket": mt["guestCpus"],
             "threads_per_core": "1",
         }
-        for s, d in instances.items()
+        for mt in machine_types
     }
