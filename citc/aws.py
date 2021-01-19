@@ -102,6 +102,7 @@ def get_types_info(client: EC2Client) -> Dict[str, NodeTypeInfo]:
             ),
             "threads_per_core": d["VCpuInfo"].get("DefaultThreadsPerCore", 1),
             "arch": d["ProcessorInfo"]["SupportedArchitectures"][0],
+            "cluster_group": 'cluster' in d["PlacementGroupInfo"]["SupportedStrategies"]
         }
         for s, d in instances.items()
     }
