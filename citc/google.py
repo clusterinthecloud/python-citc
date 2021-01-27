@@ -106,7 +106,7 @@ def get_types_info(client, nodespace):
             "memory": int(math.pow(mt["memoryMb"], 0.7) * 0.9 + 500),
             "cores_per_socket": mt["guestCpus"],
             "threads_per_core": "1",
-            "cluster_group": mt["name"].startswith("c2-") # only C2 currently support compact placement groups
+            "cluster_group": mt["name"].startswith("c2-")  # only C2 currently support compact placement groups
         }
         for mt in machine_types
     }
