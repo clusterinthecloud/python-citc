@@ -55,3 +55,4 @@ class NodeTypeInfo(TypedDict):
     cores_per_socket: int
     threads_per_core: int
     arch: Optional[str]
+    cluster_group: bool
