@@ -93,6 +93,12 @@ def get_types_info(client: EC2Client) -> Dict[str, NodeTypeInfo]:
         for page in client.get_paginator("describe_instance_types").paginate()
         for i in page["InstanceTypes"]
     }
+
+    def is_cluster_group(d):
+        if "PlacementGroupInfo" not in d:
+            return False
+        return "cluster" in d["PlacementGroupInfo"]["SupportedStrategies"]
+
     return {
         s: {
             "memory": d["MemoryInfo"]["SizeInMiB"]
@@ -102,7 +108,7 @@ def get_types_info(client: EC2Client) -> Dict[str, NodeTypeInfo]:
             ),
             "threads_per_core": d["VCpuInfo"].get("DefaultThreadsPerCore", 1),
             "arch": d["ProcessorInfo"]["SupportedArchitectures"][0],
-            "cluster_group": 'cluster' in d["PlacementGroupInfo"]["SupportedStrategies"]
+            "cluster_group": is_cluster_group(d),
         }
         for s, d in instances.items()
     }
