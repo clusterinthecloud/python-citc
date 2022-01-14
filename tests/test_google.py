@@ -1,5 +1,5 @@
 import googleapiclient.discovery  # type: ignore
-import pytest  # type: ignore
+import pytest
 from mebula import mock_google
 
 from citc.google import GoogleNode, get_types_info

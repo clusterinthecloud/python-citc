@@ -1,5 +1,5 @@
 import boto3
-import pytest  # type: ignore
+import pytest
 from moto import mock_ec2  # type: ignore
 
 from citc.aws import AwsNode, get_types_info

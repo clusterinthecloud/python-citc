@@ -1,5 +1,5 @@
 import oci  # type: ignore
-import pytest  # type: ignore
+import pytest
 from mebula import mock_oracle
 
 from citc.oracle import OracleNode

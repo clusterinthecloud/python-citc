@@ -1,7 +1,7 @@
 import subprocess
 import textwrap
 
-import pytest  # type: ignore
+import pytest
 
 from citc.slurm import node_list, SlurmNode, parse_features
 

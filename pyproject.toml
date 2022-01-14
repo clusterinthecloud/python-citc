@@ -18,6 +18,7 @@ boto3-stubs = {version = "^1.20", extras = ["ec2", "route53"]}
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
 pytest-mock = "^3.6"
+pyfakefs = "^4.5"
 black = {version = "^21.12b0", allow-prereleases = true}
 mypy = "^0.931"
 types_PyYAML = "^6.0"
