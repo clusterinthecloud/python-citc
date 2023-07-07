@@ -6,26 +6,32 @@ authors = ["Matt Williams <matt@milliams.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-boto3 = "^1.20"
+python = "^3.8.1"
 PyYaml = "^6.0"
-oci = "^2.54.0"
-tabulate = "^0.8"
-google-api-python-client = "^2.35.0"
-google-auth-oauthlib = "^0.4.6"
-boto3-stubs = {version = "^1.20", extras = ["ec2", "route53"]}
+tabulate = "^0.9"
+boto3 = {version = "^1.28", optional = true }
+oci = {version = "^2.105.0", optional = true }
+google-api-python-client = {version = "^2.92.0", optional = true }
+google-auth-oauthlib = {version = "^0.8", optional = true }
+boto3-stubs = {version = "^1.28", extras = ["ec2", "route53"], optional = true }
+
+[tool.poetry.extras]
+aws = ["boto3", "boto3-stubs"]
+azure = []
+google = ["google-api-python-client", "google-auth-oauthlib"]
+oracle = ["oci"]
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2"
-pytest-mock = "^3.6"
-pyfakefs = "^4.5"
-black = {version = "^21.12b0", allow-prereleases = true}
-mypy = "^0.931"
+pytest = "^7.0"
+pytest-mock = "^3.11"
+pyfakefs = "^5.2"
+black = {version = "^23.3"}
+mypy = "^1.4.1"
 types_PyYAML = "^6.0"
-types_tabulate = "^0.8"
-flake8 = "^4.0"
-moto = "^2.0"
-coverage = "^6.2"
+types_tabulate = "^0.9"
+flake8 = "^6.0"
+moto = "^4.0"
+coverage = "^7.0"
 mebula = {version = "^0.2.9", allow-prereleases = true, extras = ["azure", "google", "oracle"]}
 
 [tool.poetry.scripts]

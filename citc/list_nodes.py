@@ -13,7 +13,7 @@ def create_table(
     for slurm_node in slurm_nodes:
         matches = [node for node in cloud_nodes if node.name == slurm_node.name]
         if len(matches) == 1:
-            cloud_state = matches[0].state  # type: Optional[cloud.NodeState]
+            cloud_state: Optional[cloud.NodeState] = matches[0].state
         else:
             cloud_state = None
         table.append(
