@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import yaml
 
-from . import aws, oracle, cloud, google
+from . import cloud
 
 
 def load_yaml(filename: str) -> dict:
@@ -23,12 +23,18 @@ def get_cloud_nodes() -> List[cloud.CloudNode]:
 
     csp = nodespace["csp"]
     if csp == "aws":
+        from . import aws
+
         ec2 = aws.ec2_client(nodespace)
         cloud_nodes = aws.AwsNode.all(ec2, nodespace)
     elif csp == "google":
+        from . import google
+
         client = google.client(nodespace)
         cloud_nodes = google.GoogleNode.all(client, nodespace)
     elif csp == "oracle":
+        from . import oracle
+
         config = oracle.get_config()
         cloud_nodes = oracle.OracleNode.all(config, nodespace)
     elif csp == "azure":
@@ -48,9 +54,13 @@ def get_types_info() -> Dict[str, cloud.NodeTypeInfo]:
 
     csp = nodespace["csp"]
     if csp == "aws":
+        from . import aws
+
         ec2 = aws.ec2_client(nodespace)
         return aws.get_types_info(ec2)
     elif csp == "google":
+        from . import google
+
         client = google.client(nodespace)
         return google.get_types_info(client, nodespace)
     elif csp == "oracle":

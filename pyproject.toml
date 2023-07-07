@@ -7,13 +7,19 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-boto3 = "^1.20"
 PyYaml = "^6.0"
-oci = "^2.54.0"
 tabulate = "^0.8"
-google-api-python-client = "^2.35.0"
-google-auth-oauthlib = "^0.4.6"
-boto3-stubs = {version = "^1.20", extras = ["ec2", "route53"]}
+boto3 = {version = "^1.20", optional = true }
+oci = {version = "^2.54.0", optional = true }
+google-api-python-client = {version = "^2.35.0", optional = true }
+google-auth-oauthlib = {version = "^0.4.6", optional = true }
+boto3-stubs = {version = "^1.20", extras = ["ec2", "route53"], optional = true }
+
+[tool.poetry.extras]
+aws = ["boto3", "boto3-stubs"]
+azure = []
+google = ["google-api-python-client", "google-auth-oauthlib"]
+oracle = ["oci"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
