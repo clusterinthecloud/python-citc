@@ -14,12 +14,14 @@ oci = {version = "^2.105.0", optional = true }
 google-api-python-client = {version = "^2.92.0", optional = true }
 google-auth-oauthlib = {version = "^0.8", optional = true }
 boto3-stubs = {version = "^1.28", extras = ["ec2", "route53"], optional = true }
+openstacksdk = {version = "^1.4.0", optional = true }
 
 [tool.poetry.extras]
 aws = ["boto3", "boto3-stubs"]
 azure = []
 google = ["google-api-python-client", "google-auth-oauthlib"]
 oracle = ["oci"]
+openstack = ["openstacksdk"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0"
