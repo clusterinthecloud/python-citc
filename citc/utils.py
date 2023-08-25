@@ -65,6 +65,11 @@ def get_types_info() -> Dict[str, cloud.NodeTypeInfo]:
         return google.get_types_info(client, nodespace)
     elif csp == "oracle":
         raise NotImplementedError()
+    elif csp == "openstack":
+        from . import openstack
+
+        client = openstack.client()
+        return openstack.get_types_info(client)
     elif csp == "azure":
         raise NotImplementedError()
 
